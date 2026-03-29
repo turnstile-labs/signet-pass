@@ -17,7 +17,7 @@ import {
 
 const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
 
-// ZK artifacts are hosted on the Signet protocol app (apps/web).
+// ZK artifacts are hosted on the Signet protocol app (apps/protocol).
 const ARTIFACT_BASE    = process.env.NEXT_PUBLIC_ARTIFACT_BASE_URL ?? "http://localhost:3000/artifacts";
 const ARTIFACT_VERSION = "4";
 const WASM_URL = `${ARTIFACT_BASE}/signet_email.wasm?v=${ARTIFACT_VERSION}`;
@@ -352,9 +352,8 @@ export function ProveStep({ allowedDomains, cutoff, onAttested, onBack }: Props)
             await submitAttestation(proof, publicSignals as string[]);
         } catch (err) {
             if (isCancelled()) return;
-            const msg = err instanceof Error ? err.message : String(err);
             console.error(err);
-            setPhase("error"); setStatus(msg);
+            setPhase("error"); setStatus("");
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [walletClient]);
@@ -434,7 +433,7 @@ export function ProveStep({ allowedDomains, cutoff, onAttested, onBack }: Props)
 
     function runningLabel(p: string): string {
         if (p === "loading")   return "Downloading verification files…";
-        if (p === "attesting") return "Claiming your spot…";
+        if (p === "attesting") return "Claiming your pass…";
         return "Verifying your email…";
     }
 
@@ -727,7 +726,7 @@ export function ProveStep({ allowedDomains, cutoff, onAttested, onBack }: Props)
                     <span className="text-green text-sm">✓</span>
                     <div>
                         <p className="text-[0.82rem] font-semibold text-green">All set</p>
-                        <p className="text-[0.7rem] text-muted mt-0.5">Checking your spot…</p>
+                        <p className="text-[0.7rem] text-muted mt-0.5">Verifying your pass…</p>
                     </div>
                 </div>
             )}

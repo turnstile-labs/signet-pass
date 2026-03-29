@@ -9,7 +9,7 @@ export const ATTESTATION_CACHE_ADDRESS = _SIGNET_ADDRESSES.baseSepolia;
 // Factory is deployed by Signet — treasury and fee are baked in.
 // Founders only configure cutoff and exchange filter.
 export const FACTORY_ADDRESS = (
-    process.env.NEXT_PUBLIC_FACTORY_ADDRESS ?? ""
+    process.env.NEXT_PUBLIC_FACTORY_ADDRESS ?? "0x19F2d083BF21Bb7eB95893aDc28D0D9Cb61F22Bf"
 ) as `0x${string}`;
 
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";

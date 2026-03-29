@@ -31,20 +31,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <span className="font-mono text-[0.68rem] text-muted-2">
                             © {new Date().getFullYear()} Signet
                         </span>
-                        <nav className="flex items-center gap-5">
-                            {[
-                                { label: "Terms",   href: "/terms"   },
-                                { label: "Privacy", href: "/privacy" },
-                            ].map(l => (
-                                <a
-                                    key={l.label}
-                                    href={l.href}
-                                    className="text-[0.72rem] text-muted-2 hover:text-text transition-colors"
-                                >
-                                    {l.label}
-                                </a>
-                            ))}
-                        </nav>
+                        <a
+                            href="https://signet.xyz"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[0.72rem] text-muted-2 hover:text-text transition-colors"
+                        >
+                            signet.xyz ↗
+                        </a>
                     </div>
                 </footer>
                 </Providers>

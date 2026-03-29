@@ -6,6 +6,7 @@ import {
     ATTESTATION_CACHE_ADDRESS,
     ATTESTATION_CACHE_ABI,
 } from "@/lib/wagmi";
+import { LIVE_EXCHANGE_HASHES, DEFUNCT_EXCHANGE_HASHES } from "@signet/sdk";
 
 interface Attestation {
     pubkeyHash:     bigint;
@@ -14,12 +15,47 @@ interface Attestation {
     registeredAt:   bigint;
 }
 
-const COINBASE_PUBKEY_HASH =
-    19806930313339437892543285869542575252100319438226679350463646898451946018980n;
+const HASH_TO_DOMAIN = new Map<bigint, string>([
+    // Live exchanges
+    [LIVE_EXCHANGE_HASHES.coinbase,          "coinbase.com"],
+    [LIVE_EXCHANGE_HASHES.coinbaseInfo,      "coinbase.com"],
+    [LIVE_EXCHANGE_HASHES.binance,           "binance.com"],
+    [LIVE_EXCHANGE_HASHES.binanceMailersp2,  "binance.com"],
+    [LIVE_EXCHANGE_HASHES.binanceSes,        "binance.com"],
+    [LIVE_EXCHANGE_HASHES.binanceMailer3,    "binance.com"],
+    [LIVE_EXCHANGE_HASHES.binancePost,       "binance.com"],
+    [LIVE_EXCHANGE_HASHES.kraken,            "kraken.com"],
+    [LIVE_EXCHANGE_HASHES.krakenKrs,         "kraken.com"],
+    [LIVE_EXCHANGE_HASHES.okx,               "okx.com"],
+    [LIVE_EXCHANGE_HASHES.okxS1,             "okx.com"],
+    [LIVE_EXCHANGE_HASHES.bybit,             "bybit.com"],
+    [LIVE_EXCHANGE_HASHES.gemini,            "gemini.com"],
+    [LIVE_EXCHANGE_HASHES.robinhood,         "robinhood.com"],
+    [LIVE_EXCHANGE_HASHES.cryptoCom,         "crypto.com"],
+    [LIVE_EXCHANGE_HASHES.kucoin,            "kucoin.com"],
+    [LIVE_EXCHANGE_HASHES.kucoinSelector1,   "kucoin.com"],
+    [LIVE_EXCHANGE_HASHES.kucoinKuc,         "kucoin.com"],
+    [LIVE_EXCHANGE_HASHES.kucoinS2,          "kucoin.com"],
+    [LIVE_EXCHANGE_HASHES.kucoinMkt,         "kucoin.com"],
+    [LIVE_EXCHANGE_HASHES.kucoinEngagelab,   "kucoin.com"],
+    // Defunct exchanges (Rug Survivor)
+    [DEFUNCT_EXCHANGE_HASHES.mtgox,          "mtgox.com"],
+    [DEFUNCT_EXCHANGE_HASHES.quadrigacx,     "quadrigacx.com"],
+    [DEFUNCT_EXCHANGE_HASHES.terra,          "terra.money"],
+    [DEFUNCT_EXCHANGE_HASHES.anchor,         "anchorprotocol.com"],
+    [DEFUNCT_EXCHANGE_HASHES.celsius,        "celsius.network"],
+    [DEFUNCT_EXCHANGE_HASHES.voyager,        "investvoyager.com"],
+    [DEFUNCT_EXCHANGE_HASHES.vauld,          "vauld.com"],
+    [DEFUNCT_EXCHANGE_HASHES.hodlnaut,       "hodlnaut.com"],
+    [DEFUNCT_EXCHANGE_HASHES.blockfi,        "blockfi.com"],
+    [DEFUNCT_EXCHANGE_HASHES.ftx,            "ftx.com"],
+    [DEFUNCT_EXCHANGE_HASHES.ftxUs,          "ftx.us"],
+    [DEFUNCT_EXCHANGE_HASHES.wazirx,         "wazirx.com"],
+    [DEFUNCT_EXCHANGE_HASHES.dmmBitcoin,     "dmm.com"],
+]);
 
 function domainFromPubkeyHash(h: bigint): string {
-    if (h === COINBASE_PUBKEY_HASH) return "coinbase.com";
-    return "unknown domain";
+    return HASH_TO_DOMAIN.get(h) ?? "unknown";
 }
 
 function formatDate(unix: bigint): string {

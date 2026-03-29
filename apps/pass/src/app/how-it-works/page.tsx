@@ -142,7 +142,7 @@ export default function HowItWorksPage() {
 
                     <div className="rounded-xl border border-border bg-surface p-5 space-y-4 mt-2">
                         <p className="text-[0.8rem] font-mono uppercase tracking-widest text-muted-2 mb-2">
-                            What happens when a user joins
+                            What happens when a user claims their pass
                         </p>
                         <Step
                             icon="✉️"
@@ -174,8 +174,8 @@ export default function HowItWorksPage() {
                         can shut you down.
                     </p>
                     <p>
-                        Deployment costs only gas. When a user joins, they pay a small Signet
-                        protocol fee alongside their transaction. You collect no fees and hold no funds.
+                        Deployment costs only gas. When a user claims their pass, they pay a small
+                        Signet protocol fee alongside their transaction. You collect no fees and hold no funds.
                     </p>
                     <Callout>
                         <span className="font-medium text-text">Verified once, valid everywhere.</span>

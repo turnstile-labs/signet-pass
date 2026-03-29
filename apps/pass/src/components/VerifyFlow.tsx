@@ -228,8 +228,9 @@ export function VerifyFlow({ contractAddress, passName }: Props) {
             } else if (errName === "SignetWrongExchange" || raw.includes("SignetWrongExchange")) {
                 setPhase("ineligible_exchange");
             } else {
+                console.error(e);
                 setPhase("error");
-                setErrorMsg(errName || raw.split("\n")[0]);
+                setErrorMsg("");
             }
         }
     }, [walletClient, address, contractInfo, contractAddress, validContract, switchChainAsync]);

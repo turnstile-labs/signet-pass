@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.11.1",
   "scripts": {
-    "dev":          "pnpm --filter web dev",
-    "build":        "pnpm --filter web build",
-    "start":        "pnpm --filter web start",
+    "dev":          "pnpm --filter protocol dev",
+    "build":        "pnpm --filter protocol build",
+    "start":        "pnpm --filter protocol start",
     "dev:pass":     "pnpm --filter pass dev",
     "build:pass":   "pnpm --filter pass build",
     "dev:all":      "pnpm --parallel --filter '{apps/*}' dev",

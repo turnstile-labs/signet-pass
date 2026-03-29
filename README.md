@@ -12,7 +12,7 @@ A founder deploys a `SignetPass` contract in one transaction, shares a link, and
 
 | Path | Description |
 |---|---|
-| `apps/web` | Signet protocol app — ZK prover, attestation explorer, docs |
+| `apps/protocol` | Signet protocol app — ZK prover, attestation explorer, docs |
 | `apps/pass` | Signet Pass product — deploy, verify, integrate |
 | `packages/sdk` | `@signet/sdk` — core TypeScript SDK |
 | `packages/react` | `@signet/react` — React component + hook |
@@ -24,7 +24,7 @@ A founder deploys a `SignetPass` contract in one transaction, shares a link, and
 
 ```bash
 pnpm install
-pnpm dev:all          # web (:3000) + pass (:3003)
+pnpm dev:all          # protocol (:3000) + pass (:3003)
 ```
 
 Copy `apps/pass/.env.local.example` → `apps/pass/.env.local` and fill in your keys.

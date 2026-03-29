@@ -14,7 +14,7 @@
  *   3. snarkjs zkey beacon    → build/signet_email_final.zkey  (local randomness)
  *   4. snarkjs zkey export verificationkey → artifacts/verification_key.json
  *   5. Copy signet_email.wasm → artifacts/  (source of truth for the web app)
- *   6. Copy signet_email.wasm + signet_email_final.zkey → apps/web/public/artifacts/
+ *   6. Copy signet_email.wasm + signet_email_final.zkey → apps/protocol/public/artifacts/
  *
  * Estimated runtime: 30–90 minutes on Apple Silicon.
  *
@@ -33,7 +33,7 @@ const __dir      = dirname(fileURLToPath(import.meta.url));
 const root       = resolve(__dir, "..");
 const build      = resolve(root, "build");
 const artifacts  = resolve(root, "artifacts");
-const webArtifacts = resolve(root, "..", "apps", "web", "public", "artifacts");
+const webArtifacts = resolve(root, "..", "apps", "protocol", "public", "artifacts");
 
 const R1CS       = resolve(build, "signet_email.r1cs");
 const WASM_BUILD = resolve(build, "signet_email_js/signet_email.wasm");
@@ -156,10 +156,10 @@ console.log(`✓ Copied signet_email.wasm → circuits/artifacts/`);
 if (existsSync(webArtifacts)) {
     copyFileSync(WASM_OUT,   resolve(webArtifacts, "signet_email.wasm"));
     copyFileSync(ZKEY_FINAL, resolve(webArtifacts, "signet_email.zkey"));
-    console.log(`✓ Synced artifacts → apps/web/public/artifacts/`);
+    console.log(`✓ Synced artifacts → apps/protocol/public/artifacts/`);
 } else {
-    console.log(`⚠  apps/web/public/artifacts/ not found — skipping web sync`);
-    console.log(`   Run manually: cp build/signet_email_final.zkey ../apps/web/public/artifacts/signet_email.zkey`);
+    console.log(`⚠  apps/protocol/public/artifacts/ not found — skipping protocol sync`);
+    console.log(`   Run manually: cp build/signet_email_final.zkey ../apps/protocol/public/artifacts/signet_email.zkey`);
 }
 
 console.log(`
@@ -175,7 +175,7 @@ Artifacts committed to git:
 
 Artifacts gitignored (large):
   circuits/build/signet_email_final.zkey      — proving key (~299 MB)
-  apps/web/public/artifacts/signet_email.zkey — web app copy (synced above)
+  apps/protocol/public/artifacts/signet_email.zkey — protocol app copy (synced above)
 
 Next steps:
   1. Test:   node scripts/prove.mjs ../../fixtures/valid/coinbase.eml

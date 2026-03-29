@@ -12,7 +12,7 @@ The product was previously called "Signet Waitlist". All "waitlist" naming has b
 
 ```
 apps/
-  web/      — Signet protocol app (Next.js 14, :3000)
+  protocol/ — Signet protocol app (Next.js 14, :3000)
               /prove — ZK proof generation UI
               /attestation — look up any wallet's attestation
               /developers — protocol documentation
@@ -126,9 +126,9 @@ BASESCAN_API_KEY=
 
 ```bash
 pnpm install
-pnpm dev:all      # web (:3000) + pass (:3003) in parallel
-pnpm dev          # web only
+pnpm dev:all      # protocol (:3000) + pass (:3003) in parallel
+pnpm dev          # protocol only
 pnpm dev:pass     # pass only
 ```
 
-apps/pass needs apps/web running for ZK artifacts (`/artifacts/signet_email.wasm` + `.zkey`).
+apps/pass needs apps/protocol running for ZK artifacts (`/artifacts/signet_email.wasm` + `.zkey`).

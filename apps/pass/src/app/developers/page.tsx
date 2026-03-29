@@ -28,12 +28,13 @@ function dateToUnix(s: string): bigint {
     return BigInt(Math.floor(new Date(s + "T00:00:00Z").getTime() / 1000));
 }
 
-const PASS_URL = process.env.NEXT_PUBLIC_PASS_URL ?? "https://pass.signet.xyz";
+const PASS_URL_ENV = process.env.NEXT_PUBLIC_PASS_URL ?? "";
 
 function buildVerifyUrl(contract: string, name: string): string {
+    const base = PASS_URL_ENV || (typeof window !== "undefined" ? window.location.origin : "https://pass.signet.xyz");
     const p = new URLSearchParams({ contract });
     if (name.trim()) p.set("name", name.trim());
-    return `${PASS_URL}/verify?${p.toString()}`;
+    return `${base}/verify?${p.toString()}`;
 }
 
 // ── Copy button ───────────────────────────────────────────────────────────────
@@ -119,6 +120,7 @@ export default function DevelopersPage() {
     const { switchChainAsync }     = useSwitchChain();
     const { disconnect }           = useDisconnect();
 
+
     const [name,        setName]       = useState("");
     const [cutoffDate,  setCutoffDate] = useState(oneYearAgo);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -176,7 +178,9 @@ export default function DevelopersPage() {
             setDeployedTx(txHash);
             setPhase("deployed");
         } catch (e) {
-            setErrorMsg(e instanceof Error ? e.message.split("\n")[0] : String(e));
+            console.error(e);
+            const short = e instanceof Error ? e.message.split("\n")[0] : String(e);
+            setErrorMsg(short.length > 120 ? short.slice(0, 120) + "…" : short);
             setPhase("error");
         }
     }, [walletClient, address, cutoffDate, allowedHashes, switchChainAsync]);
@@ -408,13 +412,6 @@ export default function DevelopersPage() {
                                 </div>
                             )}
 
-                            {!FACTORY_ADDRESS && (
-                                <p className="text-[0.72rem] text-amber">
-                                    Factory not configured —{" "}
-                                    <code className="font-mono text-[0.68rem]">NEXT_PUBLIC_FACTORY_ADDRESS</code>
-                                    {" "}is missing.
-                                </p>
-                            )}
                         </div>
                     )}
                 </div>
