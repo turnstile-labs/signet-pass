@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# pnpm
+.pnpm-store/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# .eml files — real emails contain sensitive content, keep local only
+*.eml

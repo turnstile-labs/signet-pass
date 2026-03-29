@@ -1,0 +1,10 @@
+{
+  "name": "@signet/contracts",
+  "version": "0.1.0",
+  "description": "Solidity interface and base contract for Signet ZK email attestation gating",
+  "license": "MIT",
+  "files": [
+    "*.sol"
+  ],
+  "keywords": ["signet", "zk-email", "airdrop", "sybil", "solidity"]
+}

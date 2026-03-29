@@ -1,0 +1,12 @@
+{
+  "name": "@signet/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Signet — attestation checks, pass gating, and protocol utilities",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "peerDependencies": {
+    "viem": ">=2.0.0"
+  },
+  "keywords": ["signet", "pass", "zk-email", "sybil", "airdrop", "viem"]
+}

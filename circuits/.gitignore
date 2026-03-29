@@ -1,0 +1,17 @@
+node_modules/
+
+# Large build artifacts — do not commit
+build/*.ptau
+build/*.zkey
+build/*.r1cs
+build/*.sym
+build/signet_email_js/
+build/proof.json
+build/public_signals.json
+
+# Keep artifacts/ small files in git
+!artifacts/verification_key.json
+!artifacts/signet_email.wasm
+
+# Keep the circom binary out of git (download via compile.mjs)
+build/circom

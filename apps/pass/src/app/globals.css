@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --bg:        12 12 15;
+    --surface:   19 19 22;
+    --surface-2: 26 26 32;
+    --border:    37 37 47;
+    --border-h:  58 58 80;
+    --text:      232 232 242;
+    --white:     228 228 242;
+    --muted:     144 144 176;
+    --muted-2:   96 96 122;
+    --accent:    124 106 247;
+    --accent-2:  168 156 248;
+    --green:     74 222 128;
+    --blue:      96 165 250;
+    --red:       248 113 113;
+    --amber:     251 191 36;
+    --mono: 'JetBrains Mono','Fira Code','Cascadia Code',Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
+}
+
+html.light {
+    --bg:        248 248 252;
+    --surface:   255 255 255;
+    --surface-2: 241 241 247;
+    --border:    222 222 232;
+    --border-h:  196 196 214;
+    --text:      22 22 34;
+    --white:     22 22 34;
+    --muted:     90 90 118;
+    --muted-2:   148 148 170;
+    --accent:    99 85 232;
+    --accent-2:  74 58 196;
+    --green:     22 163 74;
+    --blue:      59 130 246;
+    --red:       220 38 38;
+    --amber:     180 100 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: rgb(var(--bg)); }
+
+body {
+    font-family: var(--sans);
+    background: rgb(var(--bg));
+    color: rgb(var(--text));
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.2s, color 0.2s;
+}
+
+html.light input[type="date"],
+html.light select { color-scheme: light; }

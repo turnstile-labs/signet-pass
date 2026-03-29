@@ -1,0 +1,15 @@
+{
+  "name": "@signet/react",
+  "version": "0.1.0",
+  "description": "React hooks and components for Signet — SignetPass, SignetGate, and attestation utilities",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@signet/sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "keywords": ["signet", "pass", "zk-email", "airdrop", "sybil", "react"]
+}

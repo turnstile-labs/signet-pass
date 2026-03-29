@@ -1,0 +1,21 @@
+{
+  "name": "signet-pass",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.11.1",
+  "scripts": {
+    "dev":          "pnpm --filter web dev",
+    "build":        "pnpm --filter web build",
+    "start":        "pnpm --filter web start",
+    "dev:pass":     "pnpm --filter pass dev",
+    "build:pass":   "pnpm --filter pass build",
+    "dev:all":      "pnpm --parallel --filter '{apps/*}' dev",
+    "seed-dkim":        "tsx scripts/seed-dkim.ts",
+    "seed-dkim:dry":    "tsx scripts/seed-dkim.ts --dry-run",
+    "monitor-dkim":     "tsx scripts/monitor-dkim.ts",
+    "monitor-dkim:dry": "tsx scripts/monitor-dkim.ts --dry-run"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

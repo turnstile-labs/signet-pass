@@ -1,0 +1,6 @@
+.next/
+node_modules/
+out/
+.env*.local
+# Circuit artifacts — too large for git; copy manually (see circuits/ scripts)
+public/artifacts/*.zkey
