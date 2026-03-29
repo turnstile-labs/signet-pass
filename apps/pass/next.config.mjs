@@ -1,13 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Allow wallet popup windows to communicate back with the opener.
     async headers() {
         return [
             {
+                // Allow wallet popup windows to communicate back with the opener.
                 source: "/(.*)",
                 headers: [
                     { key: "Cross-Origin-Opener-Policy",   value: "same-origin-allow-popups" },
                     { key: "Cross-Origin-Embedder-Policy", value: "credentialless"            },
+                ],
+            },
+            {
+                // ZK artifact files — allow cross-origin fetches and long-term caching.
+                source: "/artifacts/:path*",
+                headers: [
+                    { key: "Access-Control-Allow-Origin",    value: "*"              },
+                    { key: "Cross-Origin-Resource-Policy",   value: "cross-origin"   },
+                    { key: "Cache-Control",                  value: "public, max-age=31536000, immutable" },
                 ],
             },
         ];

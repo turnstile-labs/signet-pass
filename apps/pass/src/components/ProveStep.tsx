@@ -18,7 +18,7 @@ import {
 const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
 
 // ZK artifacts are hosted on the Signet protocol app (apps/protocol).
-const ARTIFACT_BASE    = process.env.NEXT_PUBLIC_ARTIFACT_BASE_URL ?? "http://localhost:3000/artifacts";
+const ARTIFACT_BASE    = process.env.NEXT_PUBLIC_ARTIFACT_BASE_URL ?? "/artifacts";
 const ARTIFACT_VERSION = "4";
 const WASM_URL = `${ARTIFACT_BASE}/signet_email.wasm?v=${ARTIFACT_VERSION}`;
 const ZKEY_URL = `${ARTIFACT_BASE}/signet_email.zkey?v=${ARTIFACT_VERSION}`;
@@ -280,7 +280,7 @@ export function ProveStep({ allowedDomains, cutoff, onAttested, onBack }: Props)
             let hash: `0x${string}`;
             if (usePaymaster) {
                 const callsResult = await writeContractsAsync({
-                    contracts: [{ address: ATTESTATION_CACHE_ADDRESS, abi: ATTESTATION_CACHE_ABI, functionName: "attest", args }],
+                    contracts:    [{ address: ATTESTATION_CACHE_ADDRESS, abi: ATTESTATION_CACHE_ABI, functionName: "attest", args }],
                     capabilities: { paymasterService: { url: PAYMASTER_URL } },
                 });
                 const callsId = typeof callsResult === "string" ? callsResult : callsResult.id;
@@ -674,7 +674,6 @@ export function ProveStep({ allowedDomains, cutoff, onAttested, onBack }: Props)
                            className="block text-[0.75rem] text-accent hover:underline">
                             Get free testnet ETH ↗
                         </a>
-                        <p className="text-[0.7rem] text-muted-2">Or use Coinbase Wallet — transactions are gas-free.</p>
                     </div>
                     {pendingProofRef.current && (
                         <button

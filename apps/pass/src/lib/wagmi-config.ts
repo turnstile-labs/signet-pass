@@ -5,13 +5,20 @@ import { injected, coinbaseWallet, walletConnect } from "wagmi/connectors";
 const projectId  = process.env.NEXT_PUBLIC_WC_PROJECT_ID  ?? "";
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
 
+const APP_METADATA = {
+    name:        "Signet Pass",
+    description: "Verified access passes powered by ZK email proofs.",
+    url:         "https://pass.signet.xyz",
+    icons:       ["https://pass.signet.xyz/icon.png"],
+};
+
 export const wagmiConfig = createConfig({
     ssr:    true,
     chains: [baseSepolia, base],
     connectors: [
         injected(),
-        coinbaseWallet({ appName: "Signet" }),
-        ...(projectId ? [walletConnect({ projectId })] : []),
+        coinbaseWallet({ appName: APP_METADATA.name, appLogoUrl: APP_METADATA.icons[0] }),
+        ...(projectId ? [walletConnect({ projectId, metadata: APP_METADATA })] : []),
     ],
     transports: {
         [baseSepolia.id]: http(

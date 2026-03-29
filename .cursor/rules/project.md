@@ -12,15 +12,12 @@ The product was previously called "Signet Waitlist". All "waitlist" naming has b
 
 ```
 apps/
-  protocol/ — Signet protocol app (Next.js 14, :3000)
-              /prove — ZK proof generation UI
-              /attestation — look up any wallet's attestation
-              /developers — protocol documentation
-  pass/     — Signet Pass product (Next.js 14, :3003)
+  pass/     — Signet Pass product (Next.js 14, :3000)
               / — marketing landing page
               /developers — deploy a pass + code snippets
               /verify — user-facing verification widget (card)
               /how-it-works — product explainer
+              /artifacts — serves signet_email.wasm + signet_email.zkey
 packages/
   sdk/      — @signet/sdk — core TypeScript primitives (checkPass, PASS_ABI)
   react/    — @signet/react — SignetPass component + usePass hook
@@ -107,10 +104,9 @@ Coinbase, Binance, Kraken, OKX, Bybit, Gemini, Robinhood, Crypto.com, KuCoin —
 
 ### apps/pass
 ```
-NEXT_PUBLIC_SIGNET_URL=https://signet.xyz
-NEXT_PUBLIC_ARTIFACT_BASE_URL=https://signet.xyz/artifacts
-NEXT_PUBLIC_PASS_URL=https://pass.signet.xyz
-NEXT_PUBLIC_FACTORY_ADDRESS=0x19F2d083BF21Bb7eB95893aDc28D0D9Cb61F22Bf
+NEXT_PUBLIC_PASS_URL=https://pass.signet.xyz          # used to build /verify share links
+NEXT_PUBLIC_ARTIFACT_BASE_URL=                        # optional; defaults to /artifacts
+NEXT_PUBLIC_FACTORY_ADDRESS=                          # optional; defaults to Signet factory
 NEXT_PUBLIC_ALCHEMY_API_KEY=
 NEXT_PUBLIC_WC_PROJECT_ID=
 ```
@@ -126,9 +122,7 @@ BASESCAN_API_KEY=
 
 ```bash
 pnpm install
-pnpm dev:all      # protocol (:3000) + pass (:3003) in parallel
-pnpm dev          # protocol only
-pnpm dev:pass     # pass only
+pnpm dev     # starts pass at http://localhost:3000
 ```
 
-apps/pass needs apps/protocol running for ZK artifacts (`/artifacts/signet_email.wasm` + `.zkey`).
+ZK artifacts (`signet_email.wasm` + `signet_email.zkey`) are served by the pass app itself from `apps/pass/public/artifacts/`. The `.zkey` file is gitignored (large); run `pnpm circuit:setup` to generate it locally.

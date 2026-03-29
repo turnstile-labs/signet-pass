@@ -4,7 +4,7 @@ Verified access passes powered by ZK email proofs.
 
 A founder deploys a `SignetPass` contract in one transaction, shares a link, and users click it to prove their exchange account age — no email content is ever revealed. The on-chain pass is permanent and reusable across every Signet-gated project.
 
-→ **[pass.signet.xyz](https://pass.signet.xyz)** · Protocol: [signet.xyz](https://signet.xyz)
+→ **[pass.signet.xyz](https://pass.signet.xyz)**
 
 ---
 
@@ -12,8 +12,7 @@ A founder deploys a `SignetPass` contract in one transaction, shares a link, and
 
 | Path | Description |
 |---|---|
-| `apps/protocol` | Signet protocol app — ZK prover, attestation explorer, docs |
-| `apps/pass` | Signet Pass product — deploy, verify, integrate |
+| `apps/pass` | Signet Pass — deploy, verify, integrate, ZK artifact serving |
 | `packages/sdk` | `@signet/sdk` — core TypeScript SDK |
 | `packages/react` | `@signet/react` — React component + hook |
 | `contracts/` | Solidity contracts (Foundry) |
@@ -24,7 +23,7 @@ A founder deploys a `SignetPass` contract in one transaction, shares a link, and
 
 ```bash
 pnpm install
-pnpm dev:all          # protocol (:3000) + pass (:3003)
+pnpm dev          # http://localhost:3000
 ```
 
 Copy `apps/pass/.env.local.example` → `apps/pass/.env.local` and fill in your keys.

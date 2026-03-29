@@ -6,7 +6,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
     { href: "/how-it-works", label: "How it works" },
-    { href: "/developers",   label: "Developers"   },
+    { href: "/developers",   label: "Developers" },
 ];
 
 export function SiteNav({ wide = true }: { wide?: boolean }) {
@@ -17,8 +17,8 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
         <nav className="sticky top-0 z-50 border-b border-border bg-bg/90 backdrop-blur-sm">
             <div className={`${maxW} mx-auto px-6 h-14 flex items-center justify-between`}>
 
-                {/* Brand — static, never linked */}
-                <div className="flex items-center gap-2 select-none">
+                {/* Brand — links to landing page */}
+                <Link href="/" className="flex items-center gap-2 select-none">
                     <span className="text-[1.05rem] font-bold tracking-tight text-white leading-none">
                         Signet
                     </span>
@@ -30,7 +30,7 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                                      border border-accent/20 px-1.5 py-0.5 rounded-full leading-none">
                         beta
                     </span>
-                </div>
+                </Link>
 
                 {/* Nav links + theme toggle */}
                 <div className="flex items-center gap-0.5">

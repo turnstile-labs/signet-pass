@@ -11,7 +11,7 @@ export default function HomePage() {
 
                 {/* ── Hero ──────────────────────────────────────────────────── */}
                 <p className="font-mono text-[0.68rem] uppercase tracking-widest text-muted-2 mb-5">
-                    Signet · Verified Access
+                    Signet Pass
                 </p>
 
                 <h1 className="text-[2.8rem] sm:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08] mb-5">
@@ -19,14 +19,14 @@ export default function HomePage() {
                 </h1>
 
                 <p className="text-[1rem] font-semibold text-text mb-3">
-                    Stop guessing. Start proving.
+                    A verified access pass. Backed by cryptographic history.
                 </p>
 
                 <p className="text-[1.05rem] text-muted leading-relaxed mb-10">
-                    Signet requires cryptographic proof of exchange account age —
-                    generated in the user&apos;s browser in ~30 seconds. Nothing leaves their
-                    device. Deploy a pass in one transaction. Walk away with a verified list
-                    of actual people who were actually here.
+                    Create a Signet Pass in one transaction — set a cutoff date, share the link.
+                    Users drop an old exchange email, generate a ZK proof in the browser in ~30 seconds,
+                    and claim their pass on-chain. Nothing leaves their device.
+                    No bots. No self-reported claims. No KYC.
                 </p>
 
                 {/* ── CTAs ─────────────────────────────────────────────────── */}
@@ -37,14 +37,14 @@ export default function HomePage() {
                                    hover:bg-accent/90 transition-colors"
                         style={{ color: "#fff" }}
                     >
-                        Deploy a pass
+                        Create a pass →
                     </Link>
                     <Link
                         href="/how-it-works"
                         className="border border-border px-6 py-2.5 rounded-lg text-sm text-muted
                                    hover:text-text hover:border-text/30 transition-colors"
                     >
-                        How it works →
+                        How it works
                     </Link>
                 </div>
 
@@ -54,11 +54,11 @@ export default function HomePage() {
                         <span className="text-lg mt-0.5 flex-shrink-0">🔒</span>
                         <div>
                             <p className="text-[0.85rem] font-semibold text-text mb-1">
-                                Zero data exposure.
+                                Nothing leaves the browser.
                             </p>
                             <p className="text-[0.76rem] text-muted leading-relaxed">
-                                The ZK proof runs 100% in the browser. No emails stored.
-                                No data collected. Nobody sees anything.
+                                The ZK proof runs entirely on the user&apos;s device.
+                                No email content, no inbox, no server — zero data exposure.
                             </p>
                         </div>
                     </div>
@@ -66,11 +66,11 @@ export default function HomePage() {
                         <span className="text-lg mt-0.5 flex-shrink-0">⚖️</span>
                         <div>
                             <p className="text-[0.85rem] font-semibold text-text mb-1">
-                                A pass. Not a security.
+                                A pass, not a security.
                             </p>
                             <p className="text-[0.76rem] text-muted leading-relaxed">
-                                No securities risk. No KYC red tape. No middleman.
-                                A list of real people — nothing more.
+                                No token allocation. No financial instrument. No KYC red tape.
+                                A credential proving historical exchange activity — nothing more.
                             </p>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ export default function HomePage() {
                                 Prove once. Valid everywhere.
                             </p>
                             <p className="text-[0.76rem] text-muted leading-relaxed">
-                                One attestation, stored on-chain, reused across every
+                                One attestation stored on-chain, reused across every
                                 Signet-integrated project — no re-proving ever needed.
                             </p>
                         </div>
@@ -95,7 +95,7 @@ export default function HomePage() {
                             <p className="text-[0.76rem] text-muted leading-relaxed">
                                 <code className="font-mono text-text text-[0.72rem]">isVerified(address) → bool</code>.
                                 Gate a React component, a Next.js API route, or any backend —
-                                zero infrastructure.
+                                zero infrastructure required.
                             </p>
                         </div>
                     </div>

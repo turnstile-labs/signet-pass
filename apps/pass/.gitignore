@@ -2,3 +2,5 @@
 node_modules/
 out/
 .env*.local
+# Large ZK proving key — generate locally with pnpm circuit:setup
+public/artifacts/*.zkey

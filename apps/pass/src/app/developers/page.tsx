@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import { useAccount, useWalletClient, useSwitchChain, useDisconnect } from "wagmi";
+import { useCapabilities, useWriteContracts } from "wagmi/experimental";
+import { waitForCallsStatus } from "viem/experimental";
 import { ConnectKitButton } from "connectkit";
 import { baseSepolia } from "wagmi/chains";
 import { SiteNav } from "@/components/SiteNav";
@@ -27,6 +30,9 @@ function oneYearAgo(): string {
 function dateToUnix(s: string): bigint {
     return BigInt(Math.floor(new Date(s + "T00:00:00Z").getTime() / 1000));
 }
+
+const _alchemyKey   = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
+const PAYMASTER_URL = _alchemyKey ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}` : "";
 
 const PASS_URL_ENV = process.env.NEXT_PUBLIC_PASS_URL ?? "";
 
@@ -119,6 +125,8 @@ export default function DevelopersPage() {
     const { data: walletClient }   = useWalletClient({ chainId: baseSepolia.id });
     const { switchChainAsync }     = useSwitchChain();
     const { disconnect }           = useDisconnect();
+    const { data: capabilities }   = useCapabilities();
+    const { writeContractsAsync }  = useWriteContracts();
 
 
     const [name,        setName]       = useState("");
@@ -158,6 +166,8 @@ export default function DevelopersPage() {
         try {
             await switchChainAsync({ chainId: baseSepolia.id });
             const cutoffUnix = dateToUnix(cutoffDate);
+
+            // Simulate first to get the resulting contract address.
             const { result: newAddr } = await getPublicClient().simulateContract({
                 address:      FACTORY_ADDRESS,
                 abi:          SIGNET_PASS_FACTORY_ABI,
@@ -165,15 +175,38 @@ export default function DevelopersPage() {
                 args:         [cutoffUnix, allowedHashes, address],
                 account:      address,
             });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const txHash = await (walletClient.writeContract as any)({
+
+            const contractCall = {
                 address:      FACTORY_ADDRESS,
                 abi:          SIGNET_PASS_FACTORY_ABI,
-                functionName: "deploy",
-                args:         [cutoffUnix, allowedHashes, address],
-                account:      address,
-            }) as `0x${string}`;
-            await getPublicClient().waitForTransactionReceipt({ hash: txHash });
+                functionName: "deploy" as const,
+                args:         [cutoffUnix, allowedHashes, address] as const,
+            };
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const chainCaps    = (capabilities as any)?.[baseSepolia.id];
+            const usePaymaster = !!(chainCaps?.paymasterService?.supported && PAYMASTER_URL);
+            let txHash: `0x${string}`;
+
+            if (usePaymaster) {
+                const callsResult = await writeContractsAsync({
+                    contracts:    [contractCall],
+                    capabilities: { paymasterService: { url: PAYMASTER_URL } },
+                });
+                const callsId = typeof callsResult === "string" ? callsResult : callsResult.id;
+                const result  = await waitForCallsStatus(walletClient, { id: callsId, timeout: 120_000, pollingInterval: 2_000, throwOnFailure: true });
+                txHash = result?.receipts?.[0]?.transactionHash as `0x${string}`;
+                if (!txHash) throw new Error("No receipt hash.");
+            } else {
+                // Regular EOA wallet: requires gas.
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                txHash = await (walletClient.writeContract as any)({
+                    ...contractCall,
+                    account: address,
+                }) as `0x${string}`;
+                await getPublicClient().waitForTransactionReceipt({ hash: txHash });
+            }
+
             setDeployedAddr(newAddr as string);
             setDeployedTx(txHash);
             setPhase("deployed");
@@ -183,7 +216,7 @@ export default function DevelopersPage() {
             setErrorMsg(short.length > 120 ? short.slice(0, 120) + "…" : short);
             setPhase("error");
         }
-    }, [walletClient, address, cutoffDate, allowedHashes, switchChainAsync]);
+    }, [walletClient, address, cutoffDate, allowedHashes, switchChainAsync, capabilities, writeContractsAsync]);
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -197,10 +230,10 @@ export default function DevelopersPage() {
                         Signet · Developers
                     </p>
                     <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
-                        Deploy. Copy. Ship.
+                        Create. Copy. Ship.
                     </h1>
                     <p className="text-[0.92rem] text-muted leading-relaxed">
-                        Deploy a pass in one transaction. Your contract address
+                        Create a pass in one transaction. Your contract address
                         auto-fills the code snippet — paste it in your app and you&apos;re done.
                     </p>
                 </div>
@@ -209,7 +242,7 @@ export default function DevelopersPage() {
                 <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <p className="text-[0.85rem] font-semibold text-text">
-                        {isDeployed ? "Step 1 — Pass deployed" : "Step 1 — Deploy your pass"}
+                        {isDeployed ? "Step 1 — Pass created" : "Step 1 — Create your pass"}
                     </p>
                     {isDeployed
                         ? <span className="font-mono text-[0.65rem] text-green bg-green/8 border border-green/20 px-2 py-0.5 rounded-full">✓ Live</span>
@@ -242,17 +275,23 @@ export default function DevelopersPage() {
                                 </p>
                             </div>
 
-                            <div className="flex items-center gap-4 pt-1">
+                            <div className="flex items-center gap-4 pt-1 flex-wrap">
+                                <Link
+                                    href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
+                                    className="font-mono text-[0.68rem] text-accent hover:text-accent/80 transition-colors font-medium"
+                                >
+                                    View dashboard →
+                                </Link>
                                 <a href={`https://sepolia.basescan.org/tx/${deployedTx}`}
                                    target="_blank" rel="noopener noreferrer"
                                    className="font-mono text-[0.68rem] text-muted-2 hover:text-accent transition-colors">
-                                    View transaction ↗
+                                    Transaction ↗
                                 </a>
                                 <button
                                     onClick={() => { setPhase("idle"); setDeployedAddr(""); setDeployedTx(""); setName(""); setCutoffDate(oneYearAgo()); setSelectedIds([]); }}
                                     className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
                                 >
-                                    Deploy another →
+                                    Create another →
                                 </button>
                             </div>
                         </div>
@@ -399,9 +438,9 @@ export default function DevelopersPage() {
                                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                                 </svg>
-                                                Deploying…
+                                                Creating…
                                             </span>
-                                        ) : "Deploy pass →"}
+                                        ) : "Create pass →"}
                                     </button>
                                 </div>
                             )}

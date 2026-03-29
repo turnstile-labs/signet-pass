@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata = {
-    title: "How it works — Signet",
+    title: "Protocol — Signet",
     description: "Time is the only unforgeable asset. How Signet gates access on verified exchange account age — privately, in the browser, recorded once on-chain.",
 };
 
@@ -54,7 +54,7 @@ export default function HowItWorksPage() {
 
                 <div className="mb-14">
                     <p className="font-mono text-[0.68rem] uppercase tracking-widest text-muted-2 mb-4">
-                        Signet · How it works
+                        Signet Protocol
                     </p>
                     <h1 className="text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-4">
                         Time is the only<br />unforgeable asset.
@@ -169,7 +169,7 @@ export default function HowItWorksPage() {
 
                 <Section num="04" title="Zero friction, zero infrastructure">
                     <p>
-                        Deploy via our app in one transaction. Set a cutoff date and an optional
+                        Create a pass in one transaction. Set a cutoff date and an optional
                         exchange filter, share the link. No servers. No database. No vendor that
                         can shut you down.
                     </p>
@@ -211,7 +211,7 @@ export default function HowItWorksPage() {
                                    hover:bg-accent/90 transition-colors text-center"
                         style={{ color: "#fff" }}
                     >
-                        Deploy a pass
+                        Create a pass
                     </Link>
                     <Link
                         href="/"

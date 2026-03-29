@@ -30,13 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             <span className="font-mono text-[0.68rem] text-muted-2">
                                 © {new Date().getFullYear()} Signet
                             </span>
-                            <nav className="flex items-center gap-5">
-                                <a href={`${process.env.NEXT_PUBLIC_SIGNET_URL ?? "https://signet.xyz"}`}
-                                   className="text-[0.72rem] text-muted-2 hover:text-text transition-colors"
-                                   target="_blank" rel="noopener noreferrer">
-                                    Signet Protocol ↗
-                                </a>
-                            </nav>
                         </div>
                     </footer>
                 </Providers>
