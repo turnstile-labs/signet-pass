@@ -138,6 +138,8 @@ const EXCHANGE_SELECTORS: SelectorEntry[] = [
     // post.binance.com — Binance transactional mailer (1024-bit, selector 20170925085502pm live 2026-03).
     // Note: emails signed with a=rsa-sha1 are circuit-incompatible; rsa-sha256 emails can be proved.
     { exchange: "Binance",    selector: "20170925085502pm",                   domain: "post.binance.com" },
+    // mgdirectmail.binance.com — Binance direct marketing mailer (1024-bit, selector mailo confirmed live 2026-03).
+    { exchange: "Binance",    selector: "mailo",                              domain: "mgdirectmail.binance.com" },
     { exchange: "Kraken",     selector: "google", domain: "kraken.com"          },
     { exchange: "Kraken",     selector: "krs",    domain: "kraken.com"          },  // Kraken transactional subdomain (1024-bit)
     { exchange: "OKX",        selector: "google", domain: "okx.com"             },

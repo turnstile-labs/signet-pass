@@ -28,7 +28,7 @@ interface VerifiedEntry {
 const PASS_URL_ENV = process.env.NEXT_PUBLIC_PASS_URL ?? "";
 
 function buildVerifyUrl(contract: string, name: string): string {
-    const base = PASS_URL_ENV || (typeof window !== "undefined" ? window.location.origin : "https://pass.signet.xyz");
+    const base = PASS_URL_ENV || window.location.origin;
     const p = new URLSearchParams({ contract });
     if (name.trim()) p.set("name", name.trim());
     return `${base}/verify?${p.toString()}`;
@@ -82,8 +82,11 @@ export function DashboardClient() {
     const [loading,     setLoading]     = useState(true);
     const [error,       setError]       = useState("");
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+    const [verifyUrl,   setVerifyUrl]   = useState("");
 
-    const verifyUrl = isValidAddress(contract) ? buildVerifyUrl(contract, name) : "";
+    useEffect(() => {
+        if (isValidAddress(contract)) setVerifyUrl(buildVerifyUrl(contract, name));
+    }, [contract, name]);
 
     const fetchEntries = useCallback(async () => {
         if (!isValidAddress(contract)) {
@@ -197,9 +200,12 @@ export function DashboardClient() {
 
                 {/* Header */}
                 <div>
-                    <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
-                        Signet Pass · Dashboard
-                    </p>
+                    <Link
+                        href="/developers?tab=my-passes"
+                        className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted hover:text-text transition-colors mb-4"
+                    >
+                        ← My passes
+                    </Link>
                     <div className="flex items-start justify-between gap-4 flex-wrap">
                         <h1 className="text-[1.8rem] font-bold tracking-tight text-white leading-tight">
                             {name || "Pass Dashboard"}

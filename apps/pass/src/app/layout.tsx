@@ -30,6 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             <span className="font-mono text-[0.68rem] text-muted-2">
                                 © {new Date().getFullYear()} Signet
                             </span>
+                            <div className="flex items-center gap-4">
+                                <a href="/terms"   className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Terms</a>
+                                <a href="/privacy" className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Privacy</a>
+                            </div>
                         </div>
                     </footer>
                 </Providers>
