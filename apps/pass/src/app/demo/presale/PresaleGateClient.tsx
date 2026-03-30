@@ -25,23 +25,6 @@ function shorten(addr: string) {
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-function CopyBtn({ text, label = "copy" }: { text: string; label?: string }) {
-    const [copied, setCopied] = useState(false);
-    function handleClick() {
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-    }
-    return (
-        <button
-            onClick={handleClick}
-            className="inline-flex items-center gap-1 text-[0.7rem] text-muted-2
-                       hover:text-accent transition-colors cursor-pointer"
-        >
-            {copied ? "✓ copied" : label}
-        </button>
-    );
-}
 
 function PresaleDashboard({
     unlocked,
@@ -128,21 +111,6 @@ function PresaleDashboard({
                 </div>
             </div>
 
-            {unlocked && userAddr && (
-                <div className="rounded-xl border border-green/20 bg-green/5 px-4 py-3 space-y-1">
-                    <p className="text-[0.62rem] font-mono text-muted-2 mb-1">on-chain check</p>
-                    <p className="font-mono text-[0.76rem] text-muted">
-                        isVerified(<span className="text-accent">{shorten(userAddr)}</span>)
-                    </p>
-                    <p className="font-mono text-[0.76rem]">
-                        <span className="text-muted">→ </span>
-                        <span className="text-green">true ✓</span>
-                    </p>
-                    <p className="font-mono text-[0.6rem] text-muted-2 pt-0.5">
-                        contract: {DEMO_CONTRACT.slice(0, 10)}…{DEMO_CONTRACT.slice(-8)}
-                    </p>
-                </div>
-            )}
         </div>
     );
 }
@@ -165,7 +133,6 @@ export function PresaleGateClient() {
     const unlocked = isConnected && verified === true;
 
     const [verifyUrl, setVerifyUrl] = useState("");
-    const [shareUrl,  setShareUrl]  = useState("");
     useEffect(() => {
         const base = process.env.NEXT_PUBLIC_PASS_URL || window.location.origin;
         const p = new URLSearchParams({
@@ -174,9 +141,6 @@ export function PresaleGateClient() {
             redirect: "/demo/presale",
         });
         setVerifyUrl(`${base}/verify?${p.toString()}`);
-
-        const sp = new URLSearchParams({ contract: DEMO_CONTRACT, name: DEMO_NAME });
-        setShareUrl(`${base}/verify?${sp.toString()}`);
     }, []);
 
     return (
@@ -218,16 +182,6 @@ export function PresaleGateClient() {
                         <PresaleDashboard unlocked={unlocked} userAddr={address} />
                     </div>
 
-                    {unlocked && shareUrl && (
-                        <div className="mx-5 mb-5 flex items-center justify-between gap-4 rounded-xl
-                                        border border-green/20 bg-green/5 px-4 py-3">
-                            <div className="min-w-0">
-                                <p className="text-[0.78rem] font-medium text-green mb-0.5">Share your proof</p>
-                                <p className="text-[0.66rem] font-mono text-muted-2 truncate">{shareUrl}</p>
-                            </div>
-                            <CopyBtn text={shareUrl} label="copy link" />
-                        </div>
-                    )}
 
                     {!unlocked && (
                         <div className="absolute inset-0 flex items-center justify-center
