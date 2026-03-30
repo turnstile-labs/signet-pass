@@ -54,46 +54,6 @@ export default function HomePage() {
                     </Link>
                 </div>
 
-                {/* ── Demo teaser ───────────────────────────────────────────── */}
-                <Link
-                    href="/demo"
-                    className="block rounded-2xl border border-border bg-surface px-5 py-4
-                               hover:border-accent/40 hover:bg-surface-2/60 transition-colors mb-10 group"
-                >
-                    <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2 mb-1.5">
-                                Live demo · Base Sepolia
-                            </p>
-                            <p className="text-[0.88rem] font-semibold text-text mb-1">
-                                Signet Builder Access gate
-                            </p>
-                            <p className="text-[0.76rem] text-muted leading-relaxed">
-                                Connect a wallet, prove your crypto history, unlock builder resources.
-                                The full user flow — ZK proof in the browser, on-chain verification,
-                                content reveal — runs live.
-                            </p>
-                        </div>
-                        <span className="text-muted-2 group-hover:text-accent transition-colors flex-shrink-0 mt-1 text-sm">
-                            →
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3 flex-wrap">
-                        <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                         px-2 py-0.5 rounded-full text-muted-2">
-                            🔒 locked
-                        </span>
-                        <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                         px-2 py-0.5 rounded-full text-muted-2">
-                            ZK proof · ~30 s
-                        </span>
-                        <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                         px-2 py-0.5 rounded-full text-muted-2">
-                            isVerified() → true
-                        </span>
-                    </div>
-                </Link>
-
                 {/* ── Trust signals ─────────────────────────────────────────── */}
                 <div className="grid sm:grid-cols-2 gap-3">
                     <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-4">

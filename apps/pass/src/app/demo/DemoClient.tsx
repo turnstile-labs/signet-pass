@@ -206,18 +206,53 @@ export function DemoClient() {
 
             <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
 
-                {/* ── Header ────────────────────────────────────────────────── */}
+                {/* ── Page header ───────────────────────────────────────────── */}
                 <div>
-                    <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
-                        Live demo · Base Sepolia
-                    </p>
-                    <h1 className="text-[1.8rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
-                        Try the gate
+                    <h1 className="text-[1.8rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-2">
+                        Demos
                     </h1>
-                    <p className="text-[0.9rem] text-muted leading-relaxed">
-                        A real token presale gate, deployed on-chain. Prove your crypto history —
-                        the ZK proof runs entirely in your browser, your email never leaves your device.
+                    <p className="text-[0.88rem] text-muted">
+                        Live gates deployed on Base Sepolia — interact with the real thing.
                     </p>
+                </div>
+
+                {/* ── Demo list ─────────────────────────────────────────────── */}
+                {/* More demos can be added here as additional cards. */}
+                <div className="space-y-3">
+                    <div className="rounded-2xl border border-accent/25 bg-surface px-5 py-4">
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2 mb-1.5">
+                                    Live demo · Base Sepolia
+                                </p>
+                                <p className="text-[0.88rem] font-semibold text-text mb-1">
+                                    SGNL Token Presale gate
+                                </p>
+                                <p className="text-[0.76rem] text-muted leading-relaxed">
+                                    Connect a wallet and prove your crypto history to get whitelisted.
+                                    The full user flow — ZK proof in the browser, on-chain verification,
+                                    content reveal — runs live below.
+                                </p>
+                            </div>
+                            <span className="flex-shrink-0 text-[0.65rem] font-medium text-green mt-0.5">
+                                ● active
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-3 flex-wrap">
+                            <span className="text-[0.62rem] font-mono bg-bg border border-border
+                                             px-2 py-0.5 rounded-full text-muted-2">
+                                🔒 locked
+                            </span>
+                            <span className="text-[0.62rem] font-mono bg-bg border border-border
+                                             px-2 py-0.5 rounded-full text-muted-2">
+                                ZK proof · ~30 s
+                            </span>
+                            <span className="text-[0.62rem] font-mono bg-bg border border-border
+                                             px-2 py-0.5 rounded-full text-muted-2">
+                                isVerified() → true
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* ── Gate card ─────────────────────────────────────────────── */}

@@ -62,13 +62,10 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                         <circle cx="10" cy="10" r="2.4" fill="currentColor" />
                     </svg>
 
-                    {/* Wordmark */}
-                    <span className="text-[1.02rem] font-bold tracking-tight leading-none"
-                          style={{ color: "rgb(var(--text))" }}>
-                        Signet
-                    </span>
-                    <span className="text-[1.02rem] font-bold tracking-tight text-accent leading-none">
-                        Pass
+                    {/* Wordmark — single word, two colours */}
+                    <span className="text-[1.02rem] font-bold tracking-tight leading-none">
+                        <span style={{ color: "rgb(var(--text))" }}>Signet</span>
+                        <span className="text-accent">Pass</span>
                     </span>
 
                     {/* Beta badge */}
