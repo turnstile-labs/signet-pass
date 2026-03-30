@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
+    { href: "/demo",         label: "Demo"        },
     { href: "/how-it-works", label: "How it works" },
-    { href: "/developers",   label: "Developers" },
+    { href: "/developers",   label: "Developers"  },
 ];
 
 export function SiteNav({ wide = true }: { wide?: boolean }) {
