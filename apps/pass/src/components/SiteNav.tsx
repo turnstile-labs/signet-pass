@@ -46,31 +46,19 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                 {/* Brand */}
                 <Link
                     href="/"
-                    className="flex items-center gap-2 select-none group"
+                    className="flex items-end gap-1.5 select-none"
                     onClick={() => setOpen(false)}
                 >
-                    {/* Signet seal mark — hexagonal outline + centre dot */}
-                    <svg
-                        width="18" height="18" viewBox="0 0 20 20" fill="none"
-                        className="text-accent flex-shrink-0 transition-opacity group-hover:opacity-80"
-                        aria-hidden
-                    >
-                        <path
-                            d="M10 1.5L17.79 6V14L10 18.5L2.21 14V6Z"
-                            stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"
-                        />
-                        <circle cx="10" cy="10" r="2.4" fill="currentColor" />
-                    </svg>
-
                     {/* Wordmark — single word, two colours */}
                     <span className="text-[1.02rem] font-bold tracking-tight leading-none">
                         <span style={{ color: "rgb(var(--text))" }}>Signet</span>
                         <span className="text-accent">Pass</span>
                     </span>
 
-                    {/* Beta badge */}
-                    <span className="font-mono text-[0.57rem] bg-accent/10 text-accent
-                                     border border-accent/20 px-1.5 py-0.5 rounded-full leading-none">
+                    {/* Beta badge — sits at the baseline, slightly below the text cap */}
+                    <span className="font-mono text-[0.52rem] bg-accent/10 text-accent
+                                     border border-accent/20 px-1.5 py-[2px] rounded-full
+                                     leading-none mb-[1px]">
                         beta
                     </span>
                 </Link>
