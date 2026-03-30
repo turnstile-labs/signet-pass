@@ -32,19 +32,19 @@ export default function HomePage() {
                 {/* ── CTAs ─────────────────────────────────────────────────── */}
                 <div className="flex items-center gap-3 flex-wrap mb-10">
                     <Link
-                        href="/demo"
+                        href="/developers"
                         className="bg-accent font-medium px-6 py-2.5 rounded-lg text-sm
                                    hover:bg-accent/90 transition-colors"
                         style={{ color: "#fff" }}
                     >
-                        See demos →
+                        Create a pass →
                     </Link>
                     <Link
-                        href="/developers"
+                        href="/demo"
                         className="border border-border px-6 py-2.5 rounded-lg text-sm text-muted
                                    hover:text-text hover:border-text/30 transition-colors"
                     >
-                        Create a pass
+                        See demos
                     </Link>
                 </div>
 
