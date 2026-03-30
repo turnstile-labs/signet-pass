@@ -14,7 +14,7 @@ export default function HomePage() {
                     Signet Pass
                 </p>
 
-                <h1 className="text-[2.8rem] sm:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08] mb-5">
+                <h1 className="text-[2.2rem] sm:text-[2.8rem] lg:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08] mb-5">
                     You can fake<br />a retina scan.<br />Not a 5-year receipt.
                 </h1>
 

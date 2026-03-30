@@ -294,7 +294,7 @@ export function VerifyFlow({ contractAddress, passName }: Props) {
                     <ThemeToggle />
                 </div>
             </div>
-            <h1 className="text-[1.6rem] font-bold tracking-tight text-white leading-[1.1] mb-4">
+            <h1 className="text-[1.6rem] font-bold tracking-tight text-white leading-[1.1] mb-4 break-words min-w-0">
                 {passName ?? "Prove eligibility"}
             </h1>
 
@@ -325,14 +325,14 @@ export function VerifyFlow({ contractAddress, passName }: Props) {
     // ── Card footer ────────────────────────────────────────────────────────────
 
     const cardFooter = (
-        <div className="px-6 py-3.5 border-t border-border/60 flex items-center justify-between">
-            <span className="text-[0.63rem] text-muted-2 leading-none">
+        <div className="px-6 py-3.5 border-t border-border/60 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[0.63rem] text-muted-2 leading-snug">
                 Your email stays on your device — nothing is shared
             </span>
             {isConnected && (
                 <button
                     onClick={() => disconnect()}
-                    className="text-[0.63rem] text-muted-2 hover:text-muted transition-colors cursor-pointer leading-none"
+                    className="text-[0.63rem] text-muted-2 hover:text-muted transition-colors cursor-pointer leading-none py-1"
                 >
                     Disconnect
                 </button>

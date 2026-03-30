@@ -40,7 +40,7 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                             <Link
                                 key={href}
                                 href={href}
-                                className={`px-3 py-1.5 rounded-lg text-[0.78rem] font-medium transition-colors ${
+                                className={`px-3 py-2.5 min-h-[44px] flex items-center rounded-lg text-[0.78rem] font-medium transition-colors ${
                                     active
                                         ? "text-text bg-surface-2"
                                         : "text-muted hover:text-text hover:bg-surface-2/60"
@@ -50,7 +50,7 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                             </Link>
                         );
                     })}
-                    <div className="ml-3 pl-3 border-l border-border">
+                    <div className="ml-2 pl-2 border-l border-border">
                         <ThemeToggle />
                     </div>
                 </div>

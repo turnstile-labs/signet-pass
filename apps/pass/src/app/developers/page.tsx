@@ -685,12 +685,12 @@ export default function DevelopersPage() {
                     <div className="rounded-xl border border-border bg-surface overflow-hidden">
 
                         {/* Tab bar */}
-                        <div className="flex gap-1 border-b border-border px-2 pt-1">
+                        <div className="flex border-b border-border px-2 pt-1 overflow-x-auto">
                             {TABS.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => setTab(t.id)}
-                                    className={`px-3 py-2.5 text-[0.8rem] font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+                                    className={`flex-shrink-0 px-4 py-3 min-h-[44px] text-[0.8rem] font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
                                         tab === t.id
                                             ? "border-accent text-text"
                                             : "border-transparent text-muted hover:text-text"
@@ -706,11 +706,11 @@ export default function DevelopersPage() {
 
                         {/* Install — compact single row */}
                         <div className="px-4 py-3 border-b border-border">
-                            <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-2 px-3 py-2">
+                            <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2.5">
                                 <span className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 shrink-0">
                                     Install
                                 </span>
-                                <code className="flex-1 font-mono text-[0.76rem] text-text truncate">
+                                <code className="flex-1 font-mono text-[0.76rem] text-text truncate min-w-0">
                                     {pkgMgr === "npm"  && `npm install ${activeTab.pkg}`}
                                     {pkgMgr === "pnpm" && `pnpm add ${activeTab.pkg}`}
                                     {pkgMgr === "yarn" && `yarn add ${activeTab.pkg}`}
@@ -720,7 +720,7 @@ export default function DevelopersPage() {
                                         <button
                                             key={pm}
                                             onClick={() => setPkgMgr(pm)}
-                                            className={`font-mono text-[0.62rem] px-1.5 py-0.5 rounded transition-colors cursor-pointer
+                                            className={`font-mono text-[0.65rem] px-2 py-1.5 rounded transition-colors cursor-pointer min-h-[32px]
                                                 ${pkgMgr === pm
                                                     ? "bg-accent/15 text-accent"
                                                     : "text-muted-2 hover:text-text"
