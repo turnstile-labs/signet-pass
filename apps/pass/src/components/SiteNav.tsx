@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
-    { href: "/how-it-works", label: "How it works" },
-    { href: "/developers",   label: "Developers"   },
     { href: "/demo",         label: "Demo"          },
+    { href: "/how-it-works", label: "How it works"  },
+    { href: "/developers",   label: "Developers"    },
 ];
 
 function HamburgerIcon() {
@@ -46,17 +46,33 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                 {/* Brand */}
                 <Link
                     href="/"
-                    className="flex items-center gap-2 select-none"
+                    className="flex items-center gap-2 select-none group"
                     onClick={() => setOpen(false)}
                 >
-                    <span className="text-[1.05rem] font-bold tracking-tight text-white leading-none">
+                    {/* Signet seal mark — hexagonal outline + centre dot */}
+                    <svg
+                        width="18" height="18" viewBox="0 0 20 20" fill="none"
+                        className="text-accent flex-shrink-0 transition-opacity group-hover:opacity-80"
+                        aria-hidden
+                    >
+                        <path
+                            d="M10 1.5L17.79 6V14L10 18.5L2.21 14V6Z"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"
+                        />
+                        <circle cx="10" cy="10" r="2.4" fill="currentColor" />
+                    </svg>
+
+                    {/* Wordmark */}
+                    <span className="text-[1.02rem] font-bold tracking-tight leading-none"
+                          style={{ color: "rgb(var(--text))" }}>
                         Signet
                     </span>
-                    <span className="text-muted-2 text-[0.95rem] font-light leading-none">/</span>
-                    <span className="text-[1.05rem] font-bold tracking-tight text-white leading-none">
+                    <span className="text-[1.02rem] font-bold tracking-tight text-accent leading-none">
                         Pass
                     </span>
-                    <span className="font-mono text-[0.58rem] bg-accent/10 text-accent
+
+                    {/* Beta badge */}
+                    <span className="font-mono text-[0.57rem] bg-accent/10 text-accent
                                      border border-accent/20 px-1.5 py-0.5 rounded-full leading-none">
                         beta
                     </span>
