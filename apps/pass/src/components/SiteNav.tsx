@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
-    { href: "/demo",         label: "Demo"         },
-    { href: "/how-it-works", label: "How it works"  },
+    { href: "/how-it-works", label: "How it works" },
     { href: "/developers",   label: "Developers"   },
+    { href: "/demo",         label: "Demo"          },
 ];
 
 function HamburgerIcon() {

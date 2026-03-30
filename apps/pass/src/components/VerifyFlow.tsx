@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
 import { useAccount, useDisconnect, useWalletClient, useSwitchChain } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { baseSepolia } from "wagmi/chains";
@@ -75,10 +76,12 @@ function Spinner() {
 
 interface Props {
     contractAddress: string | null;
-    passName:    string | null;
+    passName:        string | null;
+    /** If set, show a "← Back" button in the success state linking to this path. */
+    redirectTo?:     string | null;
 }
 
-export function VerifyFlow({ contractAddress, passName }: Props) {
+export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
     const { address, isConnected } = useAccount();
     const { disconnect }           = useDisconnect();
     const { data: walletClient }   = useWalletClient({ chainId: baseSepolia.id });
@@ -395,6 +398,16 @@ export function VerifyFlow({ contractAddress, passName }: Props) {
                            className="block font-mono text-[0.7rem] text-muted-2 hover:text-accent transition-colors">
                             View on BaseScan ↗
                         </a>
+                    )}
+
+                    {redirectTo && (
+                        <Link
+                            href={redirectTo}
+                            className="inline-flex items-center gap-1 text-[0.8rem] font-medium
+                                       text-accent hover:text-accent/80 transition-colors"
+                        >
+                            ← Back to demo
+                        </Link>
                     )}
                 </div>
                 {cardFooter}
