@@ -1,31 +1,93 @@
-import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteNav } from "@/components/SiteNav";
-import { DemoClient } from "./DemoClient";
 
 export const metadata: Metadata = {
-    title:       "Live Demo — Signet Pass",
-    description: "Experience the full Signet Pass flow: connect wallet, generate a ZK proof, unlock access. A real gate deployed on Base Sepolia.",
+    title:       "Demos — Signet Pass",
+    description: "Live Signet Pass gates deployed on Base Sepolia. Try the real verification flow — ZK proof in the browser, on-chain check, content reveal.",
 };
 
-function Loading() {
+// ── Demo registry ─────────────────────────────────────────────────────────────
+// Add new demos here; they appear as cards in the list automatically.
+
+const DEMOS = [
+    {
+        href:        "/demo/presale",
+        eyebrow:     "Live demo · Base Sepolia",
+        title:       "SGNL Token Presale gate",
+        description: "Connect a wallet and prove your crypto history to get whitelisted. The full user flow — ZK proof in the browser, on-chain verification, content reveal — runs live.",
+        pills:       ["🔒 locked", "ZK proof · ~30 s", "isVerified() → true"],
+        status:      "active" as const,
+    },
+] as const;
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+
+export default function DemosPage() {
     return (
         <div className="min-h-screen flex flex-col">
             <SiteNav />
-            <main className="flex-1 flex items-center justify-center">
-                <div className="w-5 h-5 relative">
-                    <div className="absolute inset-0 border-2 border-accent/30 rounded-full" />
-                    <div className="absolute inset-0 border-t-2 border-accent rounded-full animate-spin" />
+
+            <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
+
+                {/* Header */}
+                <div>
+                    <h1 className="text-[1.8rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-2">
+                        Demos
+                    </h1>
+                    <p className="text-[0.88rem] text-muted">
+                        Live gates deployed on Base Sepolia — interact with the real thing.
+                    </p>
                 </div>
+
+                {/* Demo list */}
+                <div className="space-y-3">
+                    {DEMOS.map(({ href, eyebrow, title, description, pills, status }) => (
+                        <Link
+                            key={href}
+                            href={href}
+                            className="block rounded-2xl border border-border bg-surface px-5 py-4
+                                       hover:border-accent/40 hover:bg-surface-2/60 transition-colors group"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2 mb-1.5">
+                                        {eyebrow}
+                                    </p>
+                                    <p className="text-[0.88rem] font-semibold text-text mb-1">
+                                        {title}
+                                    </p>
+                                    <p className="text-[0.76rem] text-muted leading-relaxed">
+                                        {description}
+                                    </p>
+                                </div>
+                                <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                                    {status === "active" && (
+                                        <span className="text-[0.65rem] font-medium text-green">
+                                            ● active
+                                        </span>
+                                    )}
+                                    <span className="text-muted-2 group-hover:text-accent transition-colors text-sm">
+                                        →
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 mt-3 flex-wrap">
+                                {pills.map(pill => (
+                                    <span
+                                        key={pill}
+                                        className="text-[0.62rem] font-mono bg-bg border border-border
+                                                   px-2 py-0.5 rounded-full text-muted-2"
+                                    >
+                                        {pill}
+                                    </span>
+                                ))}
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+
             </main>
         </div>
-    );
-}
-
-export default function DemoPage() {
-    return (
-        <Suspense fallback={<Loading />}>
-            <DemoClient />
-        </Suspense>
     );
 }

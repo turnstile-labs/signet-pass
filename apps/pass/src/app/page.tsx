@@ -37,7 +37,7 @@ export default function HomePage() {
                                    hover:bg-accent/90 transition-colors"
                         style={{ color: "#fff" }}
                     >
-                        Try the demo →
+                        See demos →
                     </Link>
                     <Link
                         href="/developers"
@@ -45,12 +45,6 @@ export default function HomePage() {
                                    hover:text-text hover:border-text/30 transition-colors"
                     >
                         Create a pass
-                    </Link>
-                    <Link
-                        href="/how-it-works"
-                        className="px-3 py-2.5 text-sm text-muted hover:text-text transition-colors"
-                    >
-                        How it works
                     </Link>
                 </div>
 

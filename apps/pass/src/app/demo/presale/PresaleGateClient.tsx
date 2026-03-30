@@ -7,16 +7,11 @@ import { ConnectKitButton } from "connectkit";
 import { SiteNav } from "@/components/SiteNav";
 import { SIGNET_PASS_ABI, isValidAddress } from "@/lib/wagmi";
 
-// The live demo gate deployed on Base Sepolia.
-// Set NEXT_PUBLIC_DEMO_CONTRACT in .env.local to use a different contract.
 const DEMO_CONTRACT = (
     process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x2566081B73fE2e2340B95B36ccd2256584b64C8F"
 ) as `0x${string}`;
 
 const DEMO_NAME = "SGNL Token Presale — Round 1";
-
-// ── Mock presale data ─────────────────────────────────────────────────────────
-// Static feed that fills the blurred/revealed state; gives the "live" feeling.
 
 const MOCK_FEED = [
     { addr: "0xf3a1…8c90", ago: "2 min ago"  },
@@ -25,8 +20,6 @@ const MOCK_FEED = [
     { addr: "0x4e87…1f77", ago: "11 min ago" },
     { addr: "0xc031…a55d", ago: "19 min ago" },
 ];
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function shorten(addr: string) {
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -50,8 +43,6 @@ function CopyBtn({ text, label = "copy" }: { text: string; label?: string }) {
     );
 }
 
-// ── Presale dashboard (same layout, blurred when locked) ──────────────────────
-
 function PresaleDashboard({
     unlocked,
     userAddr,
@@ -61,8 +52,6 @@ function PresaleDashboard({
 }) {
     return (
         <div className="p-5 space-y-4">
-
-            {/* Header */}
             <div className="flex items-start justify-between gap-3">
                 <div>
                     <p className="font-mono text-[0.62rem] uppercase tracking-widest text-muted-2 mb-1">
@@ -84,12 +73,11 @@ function PresaleDashboard({
                 </div>
             </div>
 
-            {/* Stat row */}
             <div className="grid grid-cols-3 gap-2">
                 {[
-                    { label: "Verified",    value: "1,247"     },
-                    { label: "Price",       value: "0.05 ETH"  },
-                    { label: "Pool",        value: "500 ETH"   },
+                    { label: "Verified",  value: "1,247"    },
+                    { label: "Price",     value: "0.05 ETH" },
+                    { label: "Pool",      value: "500 ETH"  },
                 ].map(({ label, value }) => (
                     <div key={label} className="rounded-xl border border-border bg-surface px-3 py-2.5 text-center">
                         <p className="text-[0.88rem] font-semibold text-white">{value}</p>
@@ -98,7 +86,6 @@ function PresaleDashboard({
                 ))}
             </div>
 
-            {/* Allocation details */}
             <div className="rounded-xl border border-border bg-surface px-4 py-3 space-y-1.5">
                 <div className="flex justify-between text-[0.75rem]">
                     <span className="text-muted">Max allocation</span>
@@ -114,11 +101,9 @@ function PresaleDashboard({
                 </div>
             </div>
 
-            {/* Live verification feed */}
             <div>
                 <p className="text-[0.65rem] font-mono text-muted-2 mb-2">Recent verifications</p>
                 <div className="rounded-xl border border-border bg-surface divide-y divide-border overflow-hidden">
-                    {/* User's own entry when unlocked */}
                     {unlocked && userAddr && (
                         <div className="flex items-center justify-between px-3 py-2.5 bg-green/5">
                             <div className="flex items-center gap-2">
@@ -143,7 +128,6 @@ function PresaleDashboard({
                 </div>
             </div>
 
-            {/* Contract call (unlocked only — shows after reveal) */}
             {unlocked && userAddr && (
                 <div className="rounded-xl border border-green/20 bg-green/5 px-4 py-3 space-y-1">
                     <p className="text-[0.62rem] font-mono text-muted-2 mb-1">on-chain check</p>
@@ -163,20 +147,16 @@ function PresaleDashboard({
     );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-
-export function DemoClient() {
+export function PresaleGateClient() {
     const { address, isConnected } = useAccount();
 
-    // On-chain verification check — refetch on window focus so returning
-    // from /verify immediately updates the gate state.
     const { data: verified, isLoading: checking } = useReadContract({
         address:      DEMO_CONTRACT,
         abi:          SIGNET_PASS_ABI,
         functionName: "isVerified",
         args:         [address!],
         query: {
-            enabled:             isConnected && !!address && isValidAddress(DEMO_CONTRACT),
+            enabled:              isConnected && !!address && isValidAddress(DEMO_CONTRACT),
             refetchOnWindowFocus: true,
             staleTime:            0,
         },
@@ -184,7 +164,6 @@ export function DemoClient() {
 
     const unlocked = isConnected && verified === true;
 
-    // Client-only URLs (avoids SSR/CSR mismatch)
     const [verifyUrl, setVerifyUrl] = useState("");
     const [shareUrl,  setShareUrl]  = useState("");
     useEffect(() => {
@@ -192,7 +171,7 @@ export function DemoClient() {
         const p = new URLSearchParams({
             contract: DEMO_CONTRACT,
             name:     DEMO_NAME,
-            redirect: "/demo",
+            redirect: "/demo/presale",
         });
         setVerifyUrl(`${base}/verify?${p.toString()}`);
 
@@ -204,61 +183,29 @@ export function DemoClient() {
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
+            <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-6">
 
-                {/* ── Page header ───────────────────────────────────────────── */}
+                {/* Back link */}
+                <Link
+                    href="/demo"
+                    className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted
+                               hover:text-text transition-colors"
+                >
+                    ← Demos
+                </Link>
+
+                {/* Gate heading */}
                 <div>
-                    <h1 className="text-[1.8rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-2">
-                        Demos
-                    </h1>
-                    <p className="text-[0.88rem] text-muted">
-                        Live gates deployed on Base Sepolia — interact with the real thing.
+                    <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">
+                        Live demo · Base Sepolia
                     </p>
+                    <h1 className="text-[1.6rem] sm:text-[2rem] font-bold tracking-tight text-white leading-[1.1]">
+                        SGNL Token Presale gate
+                    </h1>
                 </div>
 
-                {/* ── Demo list ─────────────────────────────────────────────── */}
-                {/* More demos can be added here as additional cards. */}
-                <div className="space-y-3">
-                    <div className="rounded-2xl border border-accent/25 bg-surface px-5 py-4">
-                        <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                                <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2 mb-1.5">
-                                    Live demo · Base Sepolia
-                                </p>
-                                <p className="text-[0.88rem] font-semibold text-text mb-1">
-                                    SGNL Token Presale gate
-                                </p>
-                                <p className="text-[0.76rem] text-muted leading-relaxed">
-                                    Connect a wallet and prove your crypto history to get whitelisted.
-                                    The full user flow — ZK proof in the browser, on-chain verification,
-                                    content reveal — runs live below.
-                                </p>
-                            </div>
-                            <span className="flex-shrink-0 text-[0.65rem] font-medium text-green mt-0.5">
-                                ● active
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-3 flex-wrap">
-                            <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                             px-2 py-0.5 rounded-full text-muted-2">
-                                🔒 locked
-                            </span>
-                            <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                             px-2 py-0.5 rounded-full text-muted-2">
-                                ZK proof · ~30 s
-                            </span>
-                            <span className="text-[0.62rem] font-mono bg-bg border border-border
-                                             px-2 py-0.5 rounded-full text-muted-2">
-                                isVerified() → true
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── Gate card ─────────────────────────────────────────────── */}
+                {/* Gate card */}
                 <div className="relative rounded-2xl border border-border overflow-hidden">
-
-                    {/* Dashboard content — blurred behind gate when locked */}
                     <div
                         style={{
                             filter:        unlocked ? "none" : "blur(5px)",
@@ -271,7 +218,6 @@ export function DemoClient() {
                         <PresaleDashboard unlocked={unlocked} userAddr={address} />
                     </div>
 
-                    {/* Share proof row — outside blur container */}
                     {unlocked && shareUrl && (
                         <div className="mx-5 mb-5 flex items-center justify-between gap-4 rounded-xl
                                         border border-green/20 bg-green/5 px-4 py-3">
@@ -283,25 +229,20 @@ export function DemoClient() {
                         </div>
                     )}
 
-                    {/* ── Gate overlay (locked only) ──────────────────────── */}
                     {!unlocked && (
                         <div className="absolute inset-0 flex items-center justify-center
                                         bg-bg/78 backdrop-blur-[3px] px-6">
                             <div className="flex flex-col items-center text-center max-w-[300px] w-full">
-
                                 <div className="w-11 h-11 rounded-2xl border border-border bg-surface
                                                 flex items-center justify-center mb-4 text-xl">
                                     🔒
                                 </div>
-
                                 <h3 className="text-[1rem] font-semibold text-white mb-1.5">
                                     Private Round Whitelist
                                 </h3>
-
                                 <p className="text-[0.76rem] text-muted mb-3">
                                     Prove you had a crypto exchange account to get whitelisted
                                 </p>
-
                                 <span className="inline-block font-mono text-[0.62rem] bg-surface
                                                  border border-border px-2.5 py-1 rounded-full
                                                  text-muted-2 mb-5">
@@ -320,9 +261,8 @@ export function DemoClient() {
                                             {({ show }) => (
                                                 <button
                                                     onClick={show}
-                                                    className="w-full bg-accent text-[0.82rem]
-                                                               font-semibold px-5 py-2.5 rounded-xl
-                                                               hover:bg-accent/90 transition-colors"
+                                                    className="w-full bg-accent text-[0.82rem] font-semibold
+                                                               px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-colors"
                                                     style={{ color: "#fff" }}
                                                 >
                                                     Connect wallet
@@ -338,9 +278,8 @@ export function DemoClient() {
                                         {verifyUrl && (
                                             <Link
                                                 href={verifyUrl}
-                                                className="block w-full bg-accent text-[0.82rem]
-                                                           font-semibold px-5 py-2.5 rounded-xl
-                                                           hover:bg-accent/90 transition-colors text-center"
+                                                className="block w-full bg-accent text-[0.82rem] font-semibold
+                                                           px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-colors text-center"
                                                 style={{ color: "#fff" }}
                                             >
                                                 Prove eligibility →
@@ -356,7 +295,7 @@ export function DemoClient() {
                     )}
                 </div>
 
-                {/* ── Deployer CTA ──────────────────────────────────────────── */}
+                {/* Deployer CTA */}
                 <div className="rounded-xl border border-border bg-surface px-5 py-4
                                 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
