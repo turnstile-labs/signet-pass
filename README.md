@@ -1,60 +1,74 @@
 # Signet Pass
 
-Verified access passes powered by ZK email proofs.
+> Prove once. Access everywhere.
 
-A founder deploys a `SignetPass` contract in one transaction, shares a link, and users click it to prove their exchange account age — no email content is ever revealed. The on-chain pass is permanent and reusable across every Signet-gated project.
+Signet Pass turns a ZK email proof into a permanent, reusable on-chain credential. A founder deploys a pass contract in one transaction, shares a link, and users verify their exchange account age — no email content is ever revealed. The credential persists across every Signet-gated project.
 
-→ **[pass.signet.xyz](https://pass.signet.xyz)**
+**[pass.signet.xyz](https://pass.signet.xyz)**
 
 ---
 
-## Monorepo
+## How it works
+
+1. **Deploy** — create a `SignetPass` contract via the UI or factory. Configure exchange filter and account age cutoff.
+2. **Share** — paste the generated link anywhere: Twitter, Discord, Notion.
+3. **Verify** — users generate a ZK proof from a single email. The proof confirms account age without revealing any personal data.
+4. **Access** — the wallet is marked verified on-chain, permanently. No re-verification needed.
+
+---
+
+## Repository
 
 | Path | Description |
 |---|---|
-| `apps/pass` | Signet Pass — deploy, verify, integrate, ZK artifact serving |
+| `apps/pass` | Web app — deploy, verify, dashboard, ZK artifact serving |
 | `packages/sdk` | `@signet/sdk` — core TypeScript SDK |
 | `packages/react` | `@signet/react` — React component + hook |
 | `contracts/` | Solidity contracts (Foundry) |
 | `circuits/` | Groth16 ZK circuit (`signet_email.circom`) |
-| `scripts/` | DKIM registry seeding + monitoring |
+| `scripts/` | DKIM registry seeding and monitoring |
+
+---
 
 ## Quick start
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
+cp apps/pass/.env.local.example apps/pass/.env.local
+pnpm dev          # → http://localhost:3000
 ```
 
-Copy `apps/pass/.env.local.example` → `apps/pass/.env.local` and fill in your keys.
+---
 
 ## Integrate
-
-Install the React package:
 
 ```bash
 npm install @signet/react
 ```
 
-Gate any component:
+**Gate a component:**
 
 ```tsx
 import { SignetPass } from "@signet/react"
 
 <SignetPass contract="0xYOUR_PASS" wallet={address}>
-  <YourApp />
+  <ProtectedContent />
 </SignetPass>
 ```
 
-Or use the raw hook:
+**Or use the hook:**
 
 ```tsx
 import { usePass } from "@signet/react"
 
-const { verified, loading } = usePass({ contract: "0x…", wallet: address })
+const { verified, loading } = usePass({ contract: "0xYOUR_PASS", wallet: address })
 ```
 
-## Contracts (Base Sepolia)
+---
+
+## Contracts
+
+**Base Sepolia (testnet)**
 
 | Contract | Address |
 |---|---|
@@ -62,9 +76,9 @@ const { verified, loading } = usePass({ contract: "0x…", wallet: address })
 | `DKIMRegistry` | `0xd984F26057A990a4f4de5A36faF7968b818BAe46` |
 | `SignetPassFactory` | `0x19F2d083BF21Bb7eB95893aDc28D0D9Cb61F22Bf` |
 
-Deploy a new pass via the factory — or use the UI at [pass.signet.xyz/developers](https://pass.signet.xyz/developers).
+Deploy a new pass via the factory or use the UI at [pass.signet.xyz/developers](https://pass.signet.xyz/developers).
 
-## Contracts (local)
+**Local development**
 
 ```bash
 cd contracts
