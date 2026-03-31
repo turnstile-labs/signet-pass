@@ -20,7 +20,7 @@ const BADGE_CONTRACT = (
     process.env.NEXT_PUBLIC_DEMO_BADGE_CONTRACT ?? ""
 ) as `0x${string}`;
 
-const DEMO_PASS_NAME = "SGNL Token Presale — Round 1";
+const DEMO_PASS_NAME = "Verified Member Badge";
 
 // ── Gas sponsorship — same pattern as rug-registry ────────────────────────────
 
