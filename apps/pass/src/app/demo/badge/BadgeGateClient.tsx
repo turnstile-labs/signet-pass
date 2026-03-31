@@ -212,12 +212,31 @@ export function BadgeGateClient() {
     const origin   = typeof window !== "undefined" ? window.location.origin : "https://signet-pass.vercel.app";
 
     // ── Share links — use token-specific URL so X/Farcaster unfurl the OG image ─
-
-    const shareText   = `I just minted a Signet Verified Member badge — ZK proof of crypto account history, on-chain, non-transferable.`;
     // /demo/badge/<tokenId> has OG metadata + redirects to /demo/badge; gives crawlers the og:image
-    const shareUrl    = mintedId ? `${origin}/demo/badge/${mintedId}` : `${origin}/demo/badge`;
-    const twitterUrl  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-    const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}`;
+    const shareUrl = mintedId ? `${origin}/demo/badge/${mintedId}` : `${origin}/demo/badge`;
+
+    // X: punchy, broad audience — lead with the surprising mechanic
+    const xText = [
+        `Just proved my crypto history with a ZK email proof and minted a soulbound badge on-chain.`,
+        ``,
+        `No KYC. No data upload. ~30 seconds in the browser.`,
+        ``,
+        `This is how @signetpass gates access — without identity.`,
+    ].join("\n");
+
+    // Farcaster: crypto-native, technical detail lands well
+    const castText = [
+        `Just minted Signet Verified Member Badge #${mintedId ?? ""}`,
+        ``,
+        `Proved exchange account history → ZK proof in browser → soulbound NFT on Base.`,
+        `Nothing left my device. No KYC. The proof is on-chain forever.`,
+        ``,
+        `Build the same gate for your drop or presale 👇`,
+        shareUrl,
+    ].join("\n");
+
+    const twitterUrl  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(xText)}&url=${encodeURIComponent(shareUrl)}`;
+    const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}`;
 
     // ── Render ────────────────────────────────────────────────────────────────
 
