@@ -6,11 +6,12 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
-    { href: "/demo",         label: "Demos"          },
-    { href: "/how-it-works", label: "How it works"   },
-    { href: "/create",       label: "My passes"      },
-    { href: "/developers",   label: "Integrate"      },
+    { href: "/demo",         label: "Demos"         },
+    { href: "/how-it-works", label: "How it works"  },
+    { href: "/developers",   label: "Integrate"     },
 ];
+
+const CTA_LINK = { href: "/create", label: "My passes" };
 
 function HamburgerIcon() {
     return (
@@ -66,6 +67,16 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
 
                 {/* Desktop nav — hidden on mobile */}
                 <div className="hidden sm:flex items-center gap-0.5">
+                    {/* My passes CTA — leftmost, blue */}
+                    <Link
+                        href={CTA_LINK.href}
+                        className="bg-accent text-[0.75rem] font-semibold px-3.5 py-1.5 rounded-lg
+                                   hover:opacity-90 transition-opacity mr-1"
+                        style={{ color: "#fff" }}
+                        onClick={() => setOpen(false)}
+                    >
+                        {CTA_LINK.label}
+                    </Link>
                     {NAV_LINKS.map(({ href, label }) => {
                         const active = pathname === href;
                         return (
@@ -108,6 +119,15 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
             {open && (
                 <div className="sm:hidden border-t border-border bg-bg/95 backdrop-blur-sm">
                     <div className="px-3 py-2 space-y-0.5">
+                        {/* My passes CTA — top of mobile menu, blue */}
+                        <Link
+                            href={CTA_LINK.href}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center px-4 py-3.5 rounded-xl text-[0.92rem]
+                                       font-semibold text-accent hover:bg-accent/8 transition-colors"
+                        >
+                            {CTA_LINK.label}
+                        </Link>
                         {NAV_LINKS.map(({ href, label }) => {
                             const active = pathname === href;
                             return (
