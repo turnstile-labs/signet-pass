@@ -76,7 +76,7 @@ function PresaleDashboard({
                 </div>
                 <div className="flex justify-between text-[0.75rem]">
                     <span className="text-muted">Eligibility</span>
-                    <span className="text-text font-medium">Any exchange · 2025 or earlier</span>
+                    <span className="text-text font-medium">Any exchange</span>
                 </div>
                 <div className="flex justify-between text-[0.75rem]">
                     <span className="text-muted">Closes</span>
@@ -200,7 +200,7 @@ export function PresaleGateClient() {
                                 <span className="inline-block font-mono text-[0.62rem] bg-surface
                                                  border border-border px-2.5 py-1 rounded-full
                                                  text-muted-2 mb-5">
-                                    Any exchange · Account from 2025 or earlier
+                                    Any exchange
                                 </span>
 
                                 {checking ? (

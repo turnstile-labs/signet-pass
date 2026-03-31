@@ -351,7 +351,7 @@ export function BadgeGateClient() {
 
                                 <span className="inline-block font-mono text-[0.62rem] bg-surface
                                                  border border-border px-2.5 py-1 rounded-full text-muted-2">
-                                    Any exchange · Account from 2025 or earlier
+                                    Any exchange
                                 </span>
 
                                 {!badgeDeployed ? (

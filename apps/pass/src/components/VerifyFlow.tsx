@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAccount, useDisconnect, useWalletClient, useSwitchChain } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { baseSepolia } from "wagmi/chains";
@@ -86,6 +87,7 @@ export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
     const { disconnect }           = useDisconnect();
     const { data: walletClient }   = useWalletClient({ chainId: baseSepolia.id });
     const { switchChainAsync }     = useSwitchChain();
+    const router                   = useRouter();
 
     const [phase,         setPhase]         = useState<Phase>("idle");
     const [contractInfo,  setContractInfo]  = useState<ContractInfo | null>(null);
@@ -94,6 +96,26 @@ export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
     const [errorMsg,      setErrorMsg]      = useState("");
     const [copied,        setCopied]        = useState(false);
     const [verifiedCount, setVerifiedCount] = useState<number | null>(null);
+    const [countdown,     setCountdown]     = useState(3);
+
+    // Auto-redirect back to the demo after success, with a 3-second countdown
+    useEffect(() => {
+        if ((phase === "done" || phase === "already_verified") && redirectTo) {
+            setCountdown(3);
+            const interval = setInterval(() => {
+                setCountdown(prev => {
+                    if (prev <= 1) {
+                        clearInterval(interval);
+                        router.push(redirectTo);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [phase, redirectTo]);
 
     const prevAddressRef = useRef<string | undefined>(undefined);
     const validContract  = isValidAddress(contractAddress);
@@ -401,13 +423,17 @@ export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
                     )}
 
                     {redirectTo && (
-                        <Link
-                            href={redirectTo}
-                            className="inline-flex items-center gap-1 text-[0.8rem] font-medium
-                                       text-accent hover:text-accent/80 transition-colors"
-                        >
-                            ← Back to demo
-                        </Link>
+                        <div className="flex items-center justify-center gap-2 text-[0.8rem] text-muted">
+                            <div className="w-3.5 h-3.5 border-2 border-accent/30 border-t-accent
+                                            rounded-full animate-spin flex-shrink-0" />
+                            <span>
+                                Returning in {countdown}s —{" "}
+                                <Link href={redirectTo}
+                                      className="text-accent hover:text-accent/80 transition-colors font-medium">
+                                    go now →
+                                </Link>
+                            </span>
+                        </div>
                     )}
                 </div>
                 {cardFooter}
