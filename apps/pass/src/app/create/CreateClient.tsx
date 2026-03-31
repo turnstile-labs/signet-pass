@@ -17,15 +17,9 @@ import {
     exchangeIdsToHashes,
 } from "@/lib/wagmi";
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
 const EXCHANGE_OPTIONS = SUPPORTED_EXCHANGES.filter(e => e.id !== "any");
 
-const _alchemyKey   = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
-const PAYMASTER_URL = _alchemyKey ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}` : "";
-const PASS_URL_ENV  = process.env.NEXT_PUBLIC_PASS_URL ?? "";
-
-// ── My-gates localStorage helpers ─────────────────────────────────────────────
+// ── localStorage helpers ───────────────────────────────────────────────────────
 
 interface SavedPass { contract: string; name: string; owner: string; createdAt: number; }
 const STORAGE_KEY = "signet_passes_v1";
@@ -70,6 +64,10 @@ function dateToUnix(s: string): bigint {
     return BigInt(Math.floor(new Date(s + "T00:00:00Z").getTime() / 1000));
 }
 
+const _alchemyKey   = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
+const PAYMASTER_URL = _alchemyKey ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}` : "";
+const PASS_URL_ENV  = process.env.NEXT_PUBLIC_PASS_URL ?? "";
+
 function buildVerifyUrl(contract: string, name: string): string {
     const base = PASS_URL_ENV || (typeof window !== "undefined" ? window.location.origin : "");
     const p = new URLSearchParams({ contract });
@@ -77,23 +75,22 @@ function buildVerifyUrl(contract: string, name: string): string {
     return `${base}/verify?${p.toString()}`;
 }
 
-function shorten(addr: string) {
-    return `${addr.slice(0, 8)}…${addr.slice(-6)}`;
-}
+// ── Copy button ───────────────────────────────────────────────────────────────
 
-// ── Spinner ───────────────────────────────────────────────────────────────────
-
-function Spinner({ sm }: { sm?: boolean }) {
-    const s = sm ? "w-3 h-3" : "w-4 h-4";
+function CopyBtn({ text, label }: { text: string; label?: string }) {
+    const [copied, setCopied] = useState(false);
     return (
-        <div className={`${s} relative flex-shrink-0`}>
-            <div className={`absolute inset-0 border-2 border-white/30 rounded-full`} />
-            <div className={`absolute inset-0 border-t-2 border-white rounded-full animate-spin`} />
-        </div>
+        <button
+            onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
+            className="inline-flex items-center gap-1 font-mono text-[0.68rem] px-2 py-0.5 rounded
+                       text-muted-2 hover:text-accent hover:bg-accent/8 transition-colors cursor-pointer"
+        >
+            {copied ? "✓ copied" : (label ?? "copy")}
+        </button>
     );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// ── Page component ────────────────────────────────────────────────────────────
 
 export function CreateClient() {
     const { address, isConnected } = useAccount();
@@ -103,7 +100,17 @@ export function CreateClient() {
     const { data: capabilities }   = useCapabilities();
     const { writeContractsAsync }  = useWriteContracts();
 
-    // Form state
+    // ── Page tab ─────────────────────────────────────────────────────────────
+
+    const [pageTab, setPageTab] = useState<"create" | "my-passes">("create");
+
+    useEffect(() => {
+        const t = new URLSearchParams(window.location.search).get("tab");
+        if (t === "my-passes") setPageTab("my-passes");
+    }, []);
+
+    // ── Form state ────────────────────────────────────────────────────────────
+
     const [name,        setName]        = useState("");
     const [cutoffDate,  setCutoffDate]  = useState(oneYearAgo);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -112,9 +119,10 @@ export function CreateClient() {
     const toggleExchange = (id: string) =>
         setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
-    // Deploy state
+    // ── Deploy state ──────────────────────────────────────────────────────────
+
     type Phase = "idle" | "deploying" | "deployed" | "error";
-    const [phase,        setPhase]       = useState<Phase>("idle");
+    const [phase,        setPhase]        = useState<Phase>("idle");
     const [deployedAddr, setDeployedAddr] = useState("");
     const [deployedTx,   setDeployedTx]   = useState("");
     const [errorMsg,     setErrorMsg]     = useState("");
@@ -125,13 +133,14 @@ export function CreateClient() {
         else setVerifyUrl("");
     }, [deployedAddr, name]);
 
-    // My gates
-    const [myGates,        setMyGates]       = useState<MyPass[]>([]);
-    const [myGatesLoading, setMyGatesLoading] = useState(false);
+    // ── My passes ─────────────────────────────────────────────────────────────
+
+    const [myPasses,        setMyPasses]        = useState<MyPass[]>([]);
+    const [myPassesLoading, setMyPassesLoading] = useState(false);
 
     useEffect(() => {
-        if (!address) { setMyGates([]); return; }
-        setMyGatesLoading(true);
+        if (!address) { setMyPasses([]); return; }
+        setMyPassesLoading(true);
         (async () => {
             try {
                 const CHUNK        = 9_000n;
@@ -171,7 +180,7 @@ export function CreateClient() {
                 );
 
                 const saved = loadSaved();
-                const gates: MyPass[] = logs
+                const passes: MyPass[] = logs
                     .map(log => {
                         const contract = log.args.pass as string;
                         const s = saved.find(p => p.contract.toLowerCase() === contract.toLowerCase());
@@ -179,14 +188,16 @@ export function CreateClient() {
                     })
                     .sort((a, b) => b.deployedAt - a.deployedAt);
 
-                setMyGates(gates);
+                setMyPasses(passes);
             } catch (e) {
-                console.error("Failed to fetch wallet gates:", e);
+                console.error("Failed to fetch passes:", e);
             } finally {
-                setMyGatesLoading(false);
+                setMyPassesLoading(false);
             }
         })();
     }, [address]);
+
+    // ── Deploy handler ────────────────────────────────────────────────────────
 
     const handleDeploy = useCallback(async () => {
         if (!walletClient || !address) return;
@@ -244,7 +255,7 @@ export function CreateClient() {
             const updated = saved.filter(p => p.contract.toLowerCase() !== (newAddr as string).toLowerCase());
             updated.push({ contract: newAddr as string, name, owner: address, createdAt: Date.now() });
             persistPasses(updated);
-            setMyGates(prev => [
+            setMyPasses(prev => [
                 { contract: newAddr as string, name, deployedAt: Math.floor(Date.now() / 1000) },
                 ...prev.filter(p => p.contract.toLowerCase() !== (newAddr as string).toLowerCase()),
             ]);
@@ -264,284 +275,109 @@ export function CreateClient() {
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-lg mx-auto w-full px-5 py-10 space-y-8">
+            <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-12 space-y-8">
 
                 {/* ── Header ────────────────────────────────────────────────── */}
-                {!isDeployed && (
-                    <div>
-                        <p className="font-mono text-[0.63rem] uppercase tracking-widest text-muted-2 mb-3">
-                            Signet Pass
-                        </p>
-                        <h1 className="text-[1.9rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-2">
-                            Create a pass
-                        </h1>
-                        <p className="text-[0.88rem] text-muted leading-relaxed">
-                            One transaction on Base Sepolia. Share the link — users prove their
-                            exchange account history to get in.
-                        </p>
-                    </div>
-                )}
+                <div>
+                    <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
+                        Signet Pass
+                    </p>
+                    <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1]">
+                        Create a pass
+                    </h1>
+                </div>
 
-                {/* ── Success state ─────────────────────────────────────────── */}
-                {isDeployed && (
-                    <div className="space-y-5">
-                        <div className="flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-green/15 border border-green/30
-                                             flex items-center justify-center text-green text-xs flex-shrink-0">
-                                ✓
-                            </span>
-                            <p className="text-[0.9rem] font-semibold text-green">Pass created</p>
-                        </div>
-
-                        {/* Share link — the hero element */}
-                        <div className="rounded-2xl border border-green/20 bg-green/5 overflow-hidden">
-                            <div className="px-4 py-2.5 border-b border-green/15 flex items-center justify-between">
-                                <p className="text-[0.65rem] font-mono uppercase tracking-widest text-green/70">
-                                    Share this link
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => navigator.clipboard.writeText(verifyUrl)}
-                                        className="text-[0.7rem] font-mono text-green/70 hover:text-green
-                                                   transition-colors cursor-pointer"
-                                    >
-                                        Copy
-                                    </button>
-                                    <a href={verifyUrl} target="_blank" rel="noopener noreferrer"
-                                       className="text-[0.7rem] font-mono text-green/70 hover:text-green transition-colors">
-                                        Open ↗
-                                    </a>
-                                </div>
-                            </div>
-                            <p className="px-4 py-3 font-mono text-[0.72rem] text-green/80 break-all leading-relaxed">
-                                {verifyUrl}
-                            </p>
-                        </div>
-
-                        {/* Action links */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <Link
-                                href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
-                                className="text-[0.82rem] font-medium text-accent hover:text-accent/80 transition-colors"
-                            >
-                                View dashboard →
-                            </Link>
-                            <button
-                                onClick={() => {
-                                    setPhase("idle");
-                                    setDeployedAddr("");
-                                    setDeployedTx("");
-                                    setName("");
-                                    setCutoffDate(oneYearAgo());
-                                    setSelectedIds([]);
-                                }}
-                                className="text-[0.78rem] text-muted hover:text-text transition-colors cursor-pointer"
-                            >
-                                Create another
-                            </button>
-                            <a href={`https://sepolia.basescan.org/tx/${deployedTx}`}
-                               target="_blank" rel="noopener noreferrer"
-                               className="text-[0.72rem] font-mono text-muted-2 hover:text-muted transition-colors">
-                                Transaction ↗
-                            </a>
-                        </div>
-                    </div>
-                )}
-
-                {/* ── Create form ───────────────────────────────────────────── */}
-                {!isDeployed && (
-                    <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
-
-                        {/* Pass name */}
-                        <div className="space-y-1.5">
-                            <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                Pass name <span className="normal-case tracking-normal">(optional)</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="e.g. OG Holders, Presale Round 1"
-                                className="w-full bg-bg border border-border rounded-xl px-3.5 py-2.5
-                                           text-[0.88rem] text-text placeholder:text-muted-2
-                                           outline-none focus:border-accent/50 transition-colors"
-                            />
-                        </div>
-
-                        {/* Connect wallet prompt */}
-                        {!isConnected && (
-                            <ConnectKitButton.Custom>
-                                {({ show }) => (
-                                    <button
-                                        onClick={show}
-                                        className="w-full rounded-xl border border-border-h bg-surface-2
-                                                   font-medium py-3 text-[0.88rem] text-text
-                                                   hover:border-accent/50 hover:text-accent
-                                                   transition-colors cursor-pointer"
-                                    >
-                                        Connect wallet to continue
-                                    </button>
-                                )}
-                            </ConnectKitButton.Custom>
-                        )}
-
-                        {/* Settings + deploy (wallet connected) */}
-                        {isConnected && (
-                            <>
-                                {/* Advanced settings toggle */}
-                                <div>
-                                    <button
-                                        onClick={() => setAdvanced(v => !v)}
-                                        className="flex items-center gap-1.5 text-[0.75rem] text-muted
-                                                   hover:text-text transition-colors cursor-pointer w-full"
-                                    >
-                                        <span className={`transition-transform duration-150 text-[0.6rem] ${advanced ? "rotate-90" : ""}`}>▸</span>
-                                        <span>Settings</span>
-                                        {!advanced && (
-                                            <span className="font-mono text-[0.65rem] text-muted-2 ml-1 truncate">
-                                                — cutoff: {cutoffDate} ·{" "}
-                                                {selectedIds.length === 0
-                                                    ? "any exchange"
-                                                    : selectedIds.length === 1
-                                                        ? EXCHANGE_OPTIONS.find(e => e.id === selectedIds[0])?.label
-                                                        : `${selectedIds.length} exchanges`}
-                                            </span>
-                                        )}
-                                    </button>
-
-                                    {advanced && (
-                                        <div className="mt-3 rounded-xl border border-border bg-bg px-4 py-4 space-y-5">
-
-                                            {/* Cutoff date */}
-                                            <div className="space-y-1.5">
-                                                <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                    Account cutoff
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={cutoffDate}
-                                                    onChange={e => setCutoffDate(e.target.value)}
-                                                    className="w-full bg-surface border border-border rounded-xl px-3.5 py-2.5
-                                                               text-[0.82rem] text-text outline-none focus:border-accent/50
-                                                               transition-colors [color-scheme:dark]"
-                                                />
-                                                <p className="text-[0.68rem] text-muted-2">
-                                                    Only accounts with a registered email older than this date qualify.
-                                                </p>
-                                            </div>
-
-                                            {/* Exchange filter */}
-                                            <div className="space-y-2">
-                                                <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                    Exchange filter
-                                                    <span className="ml-2 normal-case tracking-normal text-muted-2">
-                                                        — leave empty to accept all
-                                                    </span>
-                                                </label>
-                                                <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-                                                    {EXCHANGE_OPTIONS.map(ex => {
-                                                        const on = selectedIds.includes(ex.id);
-                                                        return (
-                                                            <button
-                                                                key={ex.id}
-                                                                onClick={() => toggleExchange(ex.id)}
-                                                                className={`rounded-xl border px-3 py-2.5 text-left transition-colors cursor-pointer
-                                                                    ${on
-                                                                        ? "border-accent/50 bg-accent/10 text-accent"
-                                                                        : "border-border bg-surface hover:border-border-h text-muted"
-                                                                    }`}
-                                                            >
-                                                                <p className="text-[0.75rem] font-medium leading-tight">{ex.label}</p>
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                                <p className="text-[0.68rem] text-muted-2">
-                                                    {selectedIds.length === 0
-                                                        ? "No filter — any supported exchange qualifies."
-                                                        : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`
-                                                    }
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Wallet info */}
-                                <div className="flex items-center justify-between">
-                                    <p className="font-mono text-[0.68rem] text-muted-2">{shorten(address!)}</p>
-                                    <button
-                                        onClick={() => disconnect()}
-                                        className="font-mono text-[0.68rem] text-muted-2 hover:text-muted
-                                                   transition-colors cursor-pointer"
-                                    >
-                                        Disconnect
-                                    </button>
-                                </div>
-
-                                {/* Deploy button */}
-                                <button
-                                    onClick={handleDeploy}
-                                    disabled={phase === "deploying" || !FACTORY_ADDRESS}
-                                    className="w-full rounded-xl bg-accent font-semibold py-3 text-[0.9rem]
-                                               hover:opacity-90 transition-opacity disabled:opacity-50
-                                               disabled:cursor-not-allowed cursor-pointer"
-                                    style={{ color: "#fff" }}
-                                >
-                                    {phase === "deploying" ? (
-                                        <span className="flex items-center justify-center gap-2">
-                                            <Spinner sm />
-                                            Creating…
-                                        </span>
-                                    ) : "Create pass →"}
-                                </button>
-
-                                {phase === "error" && (
-                                    <div className="rounded-xl border border-red/25 bg-red/5 px-4 py-3">
-                                        <p className="font-mono text-[0.72rem] text-red">{errorMsg}</p>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* ── My gates ──────────────────────────────────────────────── */}
-                {isConnected && (myGates.length > 0 || myGatesLoading) && (
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <p className="text-[0.8rem] font-semibold text-text">Your passes</p>
-                            {myGatesLoading && (
-                                <div className="w-3.5 h-3.5 relative">
-                                    <div className="absolute inset-0 border-2 border-accent/30 rounded-full" />
-                                    <div className="absolute inset-0 border-t-2 border-accent rounded-full animate-spin" />
-                                </div>
+                {/* ── Tab bar ───────────────────────────────────────────────── */}
+                <div className="flex border-b border-border -mb-4">
+                    {([
+                        { id: "create"    as const, label: "Create"    },
+                        { id: "my-passes" as const, label: "My passes" },
+                    ] as const).map(t => (
+                        <button
+                            key={t.id}
+                            onClick={() => setPageTab(t.id)}
+                            className={`relative px-4 pb-3 text-[0.85rem] font-medium transition-colors
+                                        cursor-pointer flex items-center gap-2 ${
+                                pageTab === t.id
+                                    ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent after:rounded-t"
+                                    : "text-muted hover:text-text"
+                            }`}
+                        >
+                            {t.label}
+                            {t.id === "my-passes" && myPassesLoading && (
+                                <svg className="animate-spin w-3 h-3 text-muted-2" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
                             )}
-                        </div>
+                            {t.id === "my-passes" && !myPassesLoading && myPasses.length > 0 && (
+                                <span className="font-mono text-[0.62rem] bg-accent/15 text-accent
+                                                 border border-accent/20 px-1.5 py-0.5 rounded-full leading-none">
+                                    {myPasses.length}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </div>
 
-                        {!myGatesLoading && myGates.length > 0 && (
-                            <div className="rounded-2xl border border-border bg-surface divide-y divide-border overflow-hidden">
-                                {myGates.map(g => (
-                                    <div key={g.contract} className="flex items-center justify-between px-4 py-3.5 gap-4">
+                {/* ── My passes tab ─────────────────────────────────────────── */}
+                {pageTab === "my-passes" && (
+                    <div className="space-y-3 pt-2">
+                        {!isConnected ? (
+                            <div className="rounded-xl border border-border bg-surface p-8 flex flex-col items-center gap-4 text-center">
+                                <p className="text-[0.9rem] text-muted">Connect your wallet to see your passes.</p>
+                                <ConnectKitButton.Custom>
+                                    {({ show }) => (
+                                        <button onClick={show}
+                                            className="rounded-lg border border-border-h bg-surface-2 font-medium
+                                                       px-5 py-2.5 text-[0.85rem] text-text hover:border-accent/50
+                                                       hover:text-accent transition-colors cursor-pointer">
+                                            Connect wallet
+                                        </button>
+                                    )}
+                                </ConnectKitButton.Custom>
+                            </div>
+                        ) : myPassesLoading ? (
+                            <div className="flex items-center gap-2.5 py-6 text-[0.82rem] text-muted-2">
+                                <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Looking up your passes…
+                            </div>
+                        ) : myPasses.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-border p-8 flex flex-col items-center gap-4 text-center">
+                                <p className="text-[0.9rem] text-muted">No passes yet.</p>
+                                <button
+                                    onClick={() => setPageTab("create")}
+                                    className="font-mono text-[0.78rem] text-accent hover:text-accent/80
+                                               transition-colors cursor-pointer"
+                                >
+                                    Create your first pass →
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="rounded-xl border border-border bg-surface overflow-hidden divide-y divide-border">
+                                {myPasses.map(p => (
+                                    <div key={p.contract} className="flex items-center justify-between px-4 py-3.5 gap-4">
                                         <div className="min-w-0">
-                                            {g.name && (
-                                                <p className="text-[0.84rem] font-medium text-text truncate mb-0.5">{g.name}</p>
+                                            {p.name && (
+                                                <p className="text-[0.82rem] font-medium text-text truncate">{p.name}</p>
                                             )}
                                             <p className="font-mono text-[0.68rem] text-muted-2">
-                                                {g.contract.slice(0, 10)}…{g.contract.slice(-8)}
+                                                {p.contract.slice(0, 10)}…{p.contract.slice(-8)}
                                             </p>
-                                            {g.deployedAt > 0 && (
-                                                <p className="font-mono text-[0.63rem] text-muted-2/70 mt-0.5">
-                                                    {new Date(g.deployedAt * 1000).toLocaleDateString("en-US", {
+                                            {p.deployedAt > 0 && (
+                                                <p className="font-mono text-[0.65rem] text-muted-2/70">
+                                                    {new Date(p.deployedAt * 1000).toLocaleDateString("en-US", {
                                                         month: "short", day: "numeric", year: "numeric",
                                                     })}
                                                 </p>
                                             )}
                                         </div>
                                         <Link
-                                            href={`/dashboard?contract=${g.contract}${g.name ? `&name=${encodeURIComponent(g.name)}` : ""}`}
-                                            className="flex-shrink-0 font-mono text-[0.72rem] text-accent
-                                                       hover:text-accent/80 transition-colors"
+                                            href={`/dashboard?contract=${p.contract}${p.name ? `&name=${encodeURIComponent(p.name)}` : ""}`}
+                                            className="flex-shrink-0 font-mono text-[0.72rem] text-accent hover:text-accent/80 transition-colors"
                                         >
                                             Dashboard →
                                         </Link>
@@ -549,6 +385,232 @@ export function CreateClient() {
                                 ))}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {/* ── Create tab ────────────────────────────────────────────── */}
+                {pageTab === "create" && (
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <p className="text-[0.85rem] font-semibold text-text">
+                                {isDeployed ? "Pass created" : "Create your pass"}
+                            </p>
+                            {isDeployed
+                                ? <span className="font-mono text-[0.65rem] text-green bg-green/8 border border-green/20 px-2 py-0.5 rounded-full">✓ Live</span>
+                                : <span className="text-[0.72rem] text-muted">One transaction on Base</span>
+                            }
+                        </div>
+
+                        <div className={`rounded-xl border bg-surface p-5 space-y-4 transition-colors ${
+                            isDeployed ? "border-green/25" : "border-border"
+                        }`}>
+
+                            {isDeployed ? (
+                                <div className="space-y-2.5">
+                                    {/* Share link */}
+                                    <div className="rounded-lg border border-border overflow-hidden">
+                                        <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+                                            <span className="font-mono text-[0.62rem] uppercase tracking-widest text-muted-2">
+                                                Share link
+                                            </span>
+                                            <div className="flex items-center gap-1">
+                                                <CopyBtn text={verifyUrl} label="copy link" />
+                                                <a href={verifyUrl} target="_blank" rel="noopener noreferrer"
+                                                   className="font-mono text-[0.68rem] text-muted-2 hover:text-accent transition-colors">
+                                                    ↗
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p className="px-3 py-2 font-mono text-[0.7rem] text-muted break-all">
+                                            {verifyUrl}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 pt-1 flex-wrap">
+                                        <Link
+                                            href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
+                                            className="font-mono text-[0.68rem] text-accent hover:text-accent/80 transition-colors font-medium"
+                                        >
+                                            View dashboard →
+                                        </Link>
+                                        <a href={`https://sepolia.basescan.org/tx/${deployedTx}`}
+                                           target="_blank" rel="noopener noreferrer"
+                                           className="font-mono text-[0.68rem] text-muted-2 hover:text-accent transition-colors">
+                                            Transaction ↗
+                                        </a>
+                                        <button
+                                            onClick={() => {
+                                                setPhase("idle");
+                                                setDeployedAddr("");
+                                                setDeployedTx("");
+                                                setName("");
+                                                setCutoffDate(oneYearAgo());
+                                                setSelectedIds([]);
+                                            }}
+                                            className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
+                                        >
+                                            Create another →
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {/* Pass name */}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                            Pass name{" "}
+                                            <span className="normal-case tracking-normal">(optional)</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={name}
+                                            onChange={e => setName(e.target.value)}
+                                            placeholder="My Project"
+                                            className="w-full bg-bg border border-border rounded-lg px-3 py-2
+                                                       text-[0.88rem] text-text placeholder:text-muted-2
+                                                       outline-none focus:border-accent/50 transition-colors font-mono"
+                                        />
+                                    </div>
+
+                                    {/* Connect wallet */}
+                                    {!isConnected && (
+                                        <ConnectKitButton.Custom>
+                                            {({ show }) => (
+                                                <button onClick={show}
+                                                    className="w-full rounded-lg border border-border-h bg-surface-2
+                                                               font-medium py-2.5 text-[0.88rem] text-text
+                                                               hover:border-accent/50 hover:text-accent
+                                                               transition-colors cursor-pointer">
+                                                    Connect wallet
+                                                </button>
+                                            )}
+                                        </ConnectKitButton.Custom>
+                                    )}
+
+                                    {/* Advanced settings */}
+                                    {isConnected && (
+                                        <div>
+                                            <button
+                                                onClick={() => setAdvanced(v => !v)}
+                                                className="flex items-center gap-1.5 text-[0.72rem] text-muted
+                                                           hover:text-text transition-colors cursor-pointer"
+                                            >
+                                                <span className={`transition-transform duration-150 ${advanced ? "rotate-90" : ""}`}>▸</span>
+                                                Advanced settings
+                                                {!advanced && (
+                                                    <span className="font-mono text-[0.65rem] text-muted-2 ml-1">
+                                                        (cutoff: {cutoffDate} ·{" "}
+                                                        {selectedIds.length === 0
+                                                            ? "any exchange"
+                                                            : selectedIds.length === 1
+                                                                ? EXCHANGE_OPTIONS.find(e => e.id === selectedIds[0])?.label
+                                                                : `${selectedIds.length} exchanges`
+                                                        })
+                                                    </span>
+                                                )}
+                                            </button>
+                                            {advanced && (
+                                                <div className="mt-3 rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
+                                                    {/* Cutoff date */}
+                                                    <div className="space-y-1.5">
+                                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                                            Account cutoff
+                                                        </label>
+                                                        <input
+                                                            type="date"
+                                                            value={cutoffDate}
+                                                            onChange={e => setCutoffDate(e.target.value)}
+                                                            className="w-full bg-surface border border-border rounded-lg px-3 py-2
+                                                                       text-[0.82rem] text-text outline-none focus:border-accent/50
+                                                                       transition-colors font-mono [color-scheme:dark]"
+                                                        />
+                                                        <p className="text-[0.68rem] text-muted-2">
+                                                            Only accounts with an email older than this date qualify.
+                                                        </p>
+                                                    </div>
+                                                    {/* Exchange filter */}
+                                                    <div className="space-y-2">
+                                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                                            Exchange filter
+                                                            <span className="ml-2 normal-case tracking-normal text-muted-2">
+                                                                — leave empty to accept all
+                                                            </span>
+                                                        </label>
+                                                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                                                            {EXCHANGE_OPTIONS.map(ex => {
+                                                                const on = selectedIds.includes(ex.id);
+                                                                return (
+                                                                    <button
+                                                                        key={ex.id}
+                                                                        onClick={() => toggleExchange(ex.id)}
+                                                                        className={`rounded-lg border px-2 py-2 text-left transition-colors cursor-pointer
+                                                                            ${on
+                                                                                ? "border-accent/50 bg-accent/10 text-accent"
+                                                                                : "border-border bg-surface hover:border-border-h text-muted"
+                                                                            }`}
+                                                                    >
+                                                                        <p className="text-[0.72rem] font-medium leading-tight">{ex.label}</p>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        <p className="text-[0.68rem] text-muted-2">
+                                                            {selectedIds.length === 0
+                                                                ? "No filter — any supported exchange qualifies."
+                                                                : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Deploy button */}
+                                    {isConnected && (
+                                        <div className="space-y-2">
+                                            {address && (
+                                                <div className="flex items-center justify-between">
+                                                    <p className="font-mono text-[0.68rem] text-muted-2">
+                                                        {address.slice(0, 8)}…{address.slice(-6)}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => disconnect()}
+                                                        className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
+                                                    >
+                                                        Disconnect
+                                                    </button>
+                                                </div>
+                                            )}
+                                            <button
+                                                onClick={handleDeploy}
+                                                disabled={phase === "deploying" || !FACTORY_ADDRESS}
+                                                className="w-full rounded-lg bg-accent font-semibold py-2.5 text-[0.88rem]
+                                                           hover:opacity-90 transition-opacity disabled:opacity-50
+                                                           disabled:cursor-not-allowed cursor-pointer"
+                                                style={{ color: "#fff" }}
+                                            >
+                                                {phase === "deploying" ? (
+                                                    <span className="flex items-center justify-center gap-2">
+                                                        <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                        </svg>
+                                                        Creating…
+                                                    </span>
+                                                ) : "Create pass →"}
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {phase === "error" && (
+                                        <div className="rounded-lg border border-red/25 bg-red/5 px-4 py-3">
+                                            <p className="font-mono text-[0.72rem] text-red">{errorMsg}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
