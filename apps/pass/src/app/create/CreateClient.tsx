@@ -282,9 +282,14 @@ export function CreateClient() {
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
                         Signet Pass
                     </p>
-                    <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1]">
+                    <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
                         Create a pass
                     </h1>
+                    <p className="text-[0.88rem] text-muted leading-relaxed">
+                        <span className="text-text font-medium">For founders and community managers</span>
+                        {" "}— deploy a pass in one transaction, share the link, and see who verified.
+                        No code required.
+                    </p>
                 </div>
 
                 {/* ── Tab bar ───────────────────────────────────────────────── */}

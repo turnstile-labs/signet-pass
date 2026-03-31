@@ -248,9 +248,13 @@ export default function DevelopersPage() {
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
                         Signet Pass · Integrate
                     </p>
-                    <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1]">
+                    <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
                         Create. Copy. Ship.
                     </h1>
+                    <p className="text-[0.88rem] text-muted leading-relaxed">
+                        <span className="text-text font-medium">For developers and integrators</span>
+                        {" "}— deploy a pass, copy the contract address, and drop one read call in your app.
+                    </p>
                 </div>
 
                 {/* ── Step 1: Deploy ──────────────────────────────────────── */}
