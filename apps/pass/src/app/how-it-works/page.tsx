@@ -1,13 +1,13 @@
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata = {
-    title: "Protocol — Signet",
-    description: "Time is the only unforgeable asset. How Signet gates access on verified exchange account age — privately, in the browser, recorded once on-chain.",
+    title: "How it works — Signet Pass",
+    description: "Time is the only unforgeable asset. How Signet Pass gates access on verified exchange account age — privately, in the browser, recorded once on-chain.",
 };
 
 function Section({ num, title, children }: { num: string; title: string; children: React.ReactNode }) {
     return (
-        <section className="border-t border-border pt-10 mt-10 first:border-0 first:pt-0 first:mt-0">
+        <section className="border-t border-border pt-8 mt-8 sm:pt-10 sm:mt-10 first:border-0 first:pt-0 first:mt-0">
             <div className="flex items-start gap-4">
                 <span className="font-mono text-[0.65rem] text-muted-2 mt-1 w-5 shrink-0 select-none">
                     {num}
@@ -49,9 +49,9 @@ export default function HowItWorksPage() {
 
             <SiteNav />
 
-            <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-14">
+            <main className="flex-1 max-w-3xl mx-auto w-full px-5 py-10 sm:py-14">
 
-                <div className="mb-14">
+                <div className="mb-10 sm:mb-14">
                     <p className="font-mono text-[0.68rem] uppercase tracking-widest text-muted-2 mb-4">
                         Signet Protocol
                     </p>

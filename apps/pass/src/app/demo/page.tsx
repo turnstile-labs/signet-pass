@@ -28,7 +28,7 @@ export default function DemosPage() {
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
+            <main className="flex-1 max-w-2xl mx-auto w-full px-5 py-10 space-y-8">
 
                 {/* Header */}
                 <div>

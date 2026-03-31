@@ -4,100 +4,99 @@ import { SiteNav } from "@/components/SiteNav";
 export default function HomePage() {
     return (
         <div className="min-h-screen flex flex-col">
-
             <SiteNav />
 
-            <main className="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full px-5 py-10 sm:py-16">
+            <main className="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full px-5 py-10 sm:py-16">
 
-                {/* ── Hero ──────────────────────────────────────────────────── */}
-                <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-4">
-                    Signet Pass
-                </p>
-
-                <h1 className="text-[2rem] sm:text-[2.8rem] lg:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08] mb-4">
-                    You can fake<br />a retina scan.<br />Not a 5-year receipt.
+                {/* ── Hero ─────────────────────────────────────────────────── */}
+                <h1 className="text-[2.2rem] sm:text-[3rem] font-bold tracking-tight text-white
+                                leading-[1.06] mb-5">
+                    You can fake<br />a retina scan.<br />
+                    <span className="text-accent">Not a 5-year receipt.</span>
                 </h1>
 
-                <p className="text-[0.95rem] sm:text-[1rem] font-semibold text-text mb-3">
-                    A verified access pass. Backed by cryptographic history.
+                <p className="text-[0.95rem] text-muted leading-relaxed mb-8 max-w-lg">
+                    Signet Pass lets anyone gate access using verified exchange account history —
+                    privately, in the browser, in ~30 seconds.
+                    No KYC. No bots. No code required to get started.
                 </p>
 
-                <p className="text-[0.92rem] sm:text-[1rem] text-muted leading-relaxed mb-8">
-                    Set a cutoff date, share a link. Users prove their exchange account age
-                    with a ZK email proof — entirely in the browser, in ~30 seconds.
-                    Nothing leaves their device. No bots. No self-reported claims. No KYC.
-                </p>
-
-                {/* ── CTAs ─────────────────────────────────────────────────── */}
-                <div className="flex items-center gap-3 flex-wrap mb-8 sm:mb-12">
+                {/* ── CTAs ──────────────────────────────────────────────────── */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-12">
                     <Link
                         href="/create?tab=create"
-                        className="bg-accent font-medium px-6 py-2.5 rounded-lg text-sm
-                                   hover:bg-accent/90 transition-colors"
+                        className="bg-accent font-semibold px-6 py-3 rounded-xl text-[0.9rem]
+                                   hover:opacity-90 transition-opacity text-center"
                         style={{ color: "#fff" }}
                     >
                         Create a pass →
                     </Link>
                     <Link
-                        href="/demo"
-                        className="border border-border px-6 py-2.5 rounded-lg text-sm text-muted
-                                   hover:text-text hover:border-text/30 transition-colors"
+                        href="/how-it-works"
+                        className="border border-border px-6 py-3 rounded-xl text-[0.9rem]
+                                   text-muted hover:text-text hover:border-text/30
+                                   transition-colors text-center"
                     >
-                        See demos
+                        How it works
                     </Link>
                 </div>
 
-                {/* ── Trust signals ─────────────────────────────────────────── */}
+                {/* ── Who it's for ──────────────────────────────────────────── */}
                 <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-4">
-                        <span className="text-lg mt-0.5 flex-shrink-0">🔒</span>
-                        <div>
-                            <p className="text-[0.84rem] font-semibold text-text mb-1">
-                                Nothing leaves the browser.
-                            </p>
-                            <p className="text-[0.75rem] text-muted leading-relaxed">
-                                The ZK proof runs entirely on the user&apos;s device.
-                                No email content, no inbox, no server — zero data exposure.
-                            </p>
-                        </div>
+
+                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
+                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                            Founders &amp; community managers
+                        </p>
+                        <p className="text-[0.88rem] font-semibold text-text">
+                            Deploy a pass, share a link.
+                        </p>
+                        <p className="text-[0.76rem] text-muted leading-relaxed">
+                            Set a cutoff date, get a shareable URL. Watch your verified
+                            allowlist fill up in real time — export to CSV anytime.
+                        </p>
                     </div>
-                    <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-4">
-                        <span className="text-lg mt-0.5 flex-shrink-0">⚖️</span>
-                        <div>
-                            <p className="text-[0.84rem] font-semibold text-text mb-1">
-                                A pass, not a security.
-                            </p>
-                            <p className="text-[0.75rem] text-muted leading-relaxed">
-                                No token allocation. No financial instrument. No KYC red tape.
-                                A credential proving historical exchange activity — nothing more.
-                            </p>
-                        </div>
+
+                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
+                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                            Developers &amp; integrators
+                        </p>
+                        <p className="text-[0.88rem] font-semibold text-text">
+                            One read call. Done.
+                        </p>
+                        <p className="text-[0.76rem] text-muted leading-relaxed">
+                            <code className="font-mono text-[0.72rem] text-text/80">isVerified(address) → bool</code>.
+                            Gate any component, API route, or backend —
+                            no server, no OAuth, no infrastructure.
+                        </p>
                     </div>
-                    <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-4">
-                        <span className="text-lg mt-0.5 flex-shrink-0">🔁</span>
-                        <div>
-                            <p className="text-[0.84rem] font-semibold text-text mb-1">
-                                Prove once. Valid everywhere.
-                            </p>
-                            <p className="text-[0.75rem] text-muted leading-relaxed">
-                                One attestation stored on-chain, reused across every
-                                Signet-integrated project — no re-proving ever needed.
-                            </p>
-                        </div>
+
+                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
+                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                            For users
+                        </p>
+                        <p className="text-[0.88rem] font-semibold text-text">
+                            Nothing leaves your device.
+                        </p>
+                        <p className="text-[0.76rem] text-muted leading-relaxed">
+                            The ZK proof runs entirely in the browser. No email content,
+                            no inbox access, no data ever leaves your device.
+                        </p>
                     </div>
-                    <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-4">
-                        <span className="text-lg mt-0.5 flex-shrink-0">🛠️</span>
-                        <div>
-                            <p className="text-[0.84rem] font-semibold text-text mb-1">
-                                One read call to integrate.
-                            </p>
-                            <p className="text-[0.75rem] text-muted leading-relaxed">
-                                <code className="font-mono text-text text-[0.72rem]">isVerified(address) → bool</code>.
-                                Gate any React component, API route, or backend —
-                                zero infrastructure required.
-                            </p>
-                        </div>
+
+                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
+                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                            Prove once. Valid everywhere.
+                        </p>
+                        <p className="text-[0.88rem] font-semibold text-text">
+                            One attestation, reused forever.
+                        </p>
+                        <p className="text-[0.76rem] text-muted leading-relaxed">
+                            A verified pass is stored on-chain. Any Signet-integrated
+                            project reads the same record — no re-proving, ever.
+                        </p>
                     </div>
+
                 </div>
 
             </main>

@@ -182,7 +182,7 @@ export function DashboardClient() {
                 <SiteNav />
                 <main className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-3">
                     <p className="text-[0.9rem] text-muted">No pass contract specified.</p>
-                    <Link href="/developers" className="text-accent text-[0.82rem] hover:underline">
+                    <Link href="/create?tab=create" className="text-accent text-[0.82rem] hover:underline">
                         Create a pass →
                     </Link>
                 </main>
@@ -196,12 +196,12 @@ export function DashboardClient() {
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-12 space-y-8">
+            <main className="flex-1 max-w-3xl mx-auto w-full px-5 py-10 space-y-6">
 
                 {/* Header */}
                 <div>
                     <Link
-                        href="/developers?tab=my-passes"
+                        href="/create"
                         className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted hover:text-text transition-colors mb-4"
                     >
                         ← My passes
