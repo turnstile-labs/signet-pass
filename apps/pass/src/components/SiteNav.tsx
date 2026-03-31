@@ -6,12 +6,11 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
-    { href: "/demo",         label: "Demos"         },
-    { href: "/how-it-works", label: "How it works"  },
-    { href: "/developers",   label: "Developers"    },
+    { href: "/demo",         label: "Demos"          },
+    { href: "/how-it-works", label: "How it works"   },
+    { href: "/create",       label: "Create a pass"  },
+    { href: "/developers",   label: "Developers"     },
 ];
-
-const CTA_LINK = { href: "/create", label: "Create a pass" };
 
 function HamburgerIcon() {
     return (
@@ -84,15 +83,7 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                             </Link>
                         );
                     })}
-                    <div className="ml-2 pl-2 border-l border-border flex items-center gap-2">
-                        <Link
-                            href={CTA_LINK.href}
-                            className="bg-accent text-[0.75rem] font-semibold px-3.5 py-1.5 rounded-lg
-                                       hover:opacity-90 transition-opacity"
-                            style={{ color: "#fff" }}
-                        >
-                            {CTA_LINK.label}
-                        </Link>
+                    <div className="ml-2 pl-2 border-l border-border">
                         <ThemeToggle />
                     </div>
                 </div>
@@ -134,14 +125,6 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                                 </Link>
                             );
                         })}
-                        <Link
-                            href={CTA_LINK.href}
-                            className="flex items-center px-4 py-3.5 rounded-xl
-                                       text-[0.92rem] font-semibold text-accent
-                                       hover:bg-accent/8 transition-colors"
-                        >
-                            {CTA_LINK.label} →
-                        </Link>
                     </div>
                 </div>
             )}
