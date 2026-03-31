@@ -31,7 +31,7 @@ export default function HomePage() {
                 {/* ── CTAs ─────────────────────────────────────────────────── */}
                 <div className="flex items-center gap-3 flex-wrap mb-8 sm:mb-12">
                     <Link
-                        href="/create"
+                        href="/create?tab=create"
                         className="bg-accent font-medium px-6 py-2.5 rounded-lg text-sm
                                    hover:bg-accent/90 transition-colors"
                         style={{ color: "#fff" }}

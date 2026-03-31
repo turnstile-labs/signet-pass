@@ -102,11 +102,11 @@ export function CreateClient() {
 
     // ── Page tab ─────────────────────────────────────────────────────────────
 
-    const [pageTab, setPageTab] = useState<"create" | "my-passes">("create");
+    const [pageTab, setPageTab] = useState<"create" | "my-passes">("my-passes");
 
     useEffect(() => {
         const t = new URLSearchParams(window.location.search).get("tab");
-        if (t === "my-passes") setPageTab("my-passes");
+        if (t === "create") setPageTab("create");
     }, []);
 
     // ── Form state ────────────────────────────────────────────────────────────
@@ -283,12 +283,11 @@ export function CreateClient() {
                         Signet Pass
                     </p>
                     <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
-                        Create a pass
+                        My passes
                     </h1>
                     <p className="text-[0.88rem] text-muted leading-relaxed">
                         <span className="text-text font-medium">For founders and community managers</span>
-                        {" "}— deploy a pass in one transaction, share the link, and see who verified.
-                        No code required.
+                        {" "}— deploy a pass, share the link, and see who verified. No code required.
                     </p>
                 </div>
 
