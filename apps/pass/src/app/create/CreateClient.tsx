@@ -283,7 +283,7 @@ export function CreateClient() {
                         Signet Pass
                     </p>
                     <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1] mb-3">
-                        My passes
+                        {pageTab === "create" ? "New pass" : "My passes"}
                     </h1>
                     <p className="text-[0.88rem] text-muted leading-relaxed">
                         <span className="text-text font-medium">For founders and community managers</span>
@@ -294,8 +294,8 @@ export function CreateClient() {
                 {/* ── Tab bar ───────────────────────────────────────────────── */}
                 <div className="flex border-b border-border -mb-4">
                     {([
-                        { id: "create"    as const, label: "Create"    },
                         { id: "my-passes" as const, label: "My passes" },
+                        { id: "create"    as const, label: "New pass"   },
                     ] as const).map(t => (
                         <button
                             key={t.id}
@@ -357,7 +357,7 @@ export function CreateClient() {
                                     className="font-mono text-[0.78rem] text-accent hover:text-accent/80
                                                transition-colors cursor-pointer"
                                 >
-                                    Create your first pass →
+                                    New pass →
                                 </button>
                             </div>
                         ) : (
