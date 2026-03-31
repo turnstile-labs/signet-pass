@@ -281,7 +281,7 @@ export function CreateClient() {
                 {view === "list" && (
                     <>
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-4">
                             <div>
                                 <p className="font-mono text-[0.63rem] uppercase tracking-widest text-muted-2 mb-2">
                                     Signet Pass
@@ -296,9 +296,9 @@ export function CreateClient() {
                             </div>
                             <button
                                 onClick={() => { resetCreate(); setView("create"); }}
-                                className="flex-shrink-0 flex items-center gap-1.5 bg-accent text-[0.78rem]
-                                           font-semibold px-3.5 py-2 rounded-xl hover:opacity-90
-                                           transition-opacity mt-1"
+                                className="w-full sm:w-auto flex items-center justify-center gap-1.5
+                                           bg-accent text-[0.85rem] font-semibold px-5 py-3 rounded-xl
+                                           hover:opacity-90 transition-opacity"
                                 style={{ color: "#fff" }}
                             >
                                 <span className="text-base leading-none">+</span>
@@ -410,56 +410,74 @@ export function CreateClient() {
 
                         {/* ── Success state ───────────────────────────────── */}
                         {isDeployed ? (
-                            <div className="space-y-5">
+                            <div className="space-y-4">
+
+                                {/* Confirmation badge */}
                                 <div className="flex items-center gap-2">
                                     <span className="w-5 h-5 rounded-full bg-green/15 border border-green/30
                                                      flex items-center justify-center text-green text-[0.7rem]
                                                      flex-shrink-0">✓</span>
-                                    <p className="text-[0.9rem] font-semibold text-green">Live on Base Sepolia</p>
+                                    <p className="text-[0.88rem] font-semibold text-green">Live on Base Sepolia</p>
                                 </div>
 
+                                {/* Share link card */}
                                 <div className="rounded-2xl border border-green/20 bg-green/5 overflow-hidden">
-                                    <div className="px-4 py-2.5 border-b border-green/15
-                                                    flex items-center justify-between">
-                                        <p className="text-[0.63rem] font-mono uppercase tracking-widest text-green/70">
-                                            Share this link
-                                        </p>
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() => navigator.clipboard.writeText(verifyUrl)}
-                                                className="text-[0.7rem] font-mono text-green/70 hover:text-green
-                                                           transition-colors cursor-pointer"
-                                            >
-                                                Copy
-                                            </button>
-                                            <a href={verifyUrl} target="_blank" rel="noopener noreferrer"
-                                               className="text-[0.7rem] font-mono text-green/70 hover:text-green transition-colors">
-                                                Open ↗
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <p className="px-4 py-3 font-mono text-[0.72rem] text-green/80 break-all leading-relaxed">
+                                    <p className="px-4 pt-3 text-[0.63rem] font-mono uppercase tracking-widest text-green/60">
+                                        Share this link with your community
+                                    </p>
+                                    <p className="px-4 pt-1 pb-3 font-mono text-[0.72rem] text-green/80 break-all leading-relaxed">
                                         {verifyUrl}
                                     </p>
+                                    <div className="border-t border-green/15 flex">
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(verifyUrl)}
+                                            className="flex-1 py-2.5 text-[0.8rem] font-medium text-green/70
+                                                       hover:bg-green/8 hover:text-green transition-colors
+                                                       cursor-pointer border-r border-green/15"
+                                        >
+                                            Copy link
+                                        </button>
+                                        <a
+                                            href={verifyUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex-1 py-2.5 text-[0.8rem] font-medium text-green/70
+                                                       hover:bg-green/8 hover:text-green transition-colors text-center"
+                                        >
+                                            Preview ↗
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-4">
-                                    <Link
-                                        href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
-                                        className="text-[0.84rem] font-medium text-accent hover:text-accent/80 transition-colors"
-                                    >
-                                        View allowlist →
-                                    </Link>
+                                {/* Primary action */}
+                                <Link
+                                    href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
+                                    className="flex items-center justify-between w-full rounded-2xl
+                                               border border-border bg-surface px-4 py-3.5
+                                               hover:border-accent/40 hover:bg-surface-2/60 transition-colors group"
+                                >
+                                    <div>
+                                        <p className="text-[0.88rem] font-semibold text-text">View verified wallets</p>
+                                        <p className="text-[0.72rem] text-muted mt-0.5">See who claimed a pass, export to CSV</p>
+                                    </div>
+                                    <span className="text-muted-2 group-hover:text-accent transition-colors">→</span>
+                                </Link>
+
+                                {/* Secondary links */}
+                                <div className="flex items-center justify-between px-1">
                                     <button
                                         onClick={() => { resetCreate(); setView("list"); }}
-                                        className="text-[0.78rem] text-muted hover:text-text transition-colors cursor-pointer"
+                                        className="text-[0.8rem] text-muted hover:text-text transition-colors cursor-pointer"
                                     >
                                         ← My passes
                                     </button>
-                                    <a href={`https://sepolia.basescan.org/tx/${deployedTx}`}
-                                       target="_blank" rel="noopener noreferrer"
-                                       className="text-[0.72rem] font-mono text-muted-2 hover:text-muted transition-colors">
-                                        Transaction ↗
+                                    <a
+                                        href={`https://sepolia.basescan.org/tx/${deployedTx}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[0.75rem] text-muted-2 hover:text-muted transition-colors"
+                                    >
+                                        View transaction ↗
                                     </a>
                                 </div>
                             </div>
