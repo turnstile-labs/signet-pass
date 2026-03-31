@@ -273,7 +273,7 @@ export function CreateClient() {
                             Signet Pass
                         </p>
                         <h1 className="text-[1.9rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1] mb-2">
-                            Create a gate
+                            Create a pass
                         </h1>
                         <p className="text-[0.88rem] text-muted leading-relaxed">
                             One transaction on Base Sepolia. Share the link — users prove their
@@ -290,7 +290,7 @@ export function CreateClient() {
                                              flex items-center justify-center text-green text-xs flex-shrink-0">
                                 ✓
                             </span>
-                            <p className="text-[0.9rem] font-semibold text-green">Gate created</p>
+                            <p className="text-[0.9rem] font-semibold text-green">Pass created</p>
                         </div>
 
                         {/* Share link — the hero element */}
@@ -352,10 +352,10 @@ export function CreateClient() {
                 {!isDeployed && (
                     <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
 
-                        {/* Gate name */}
+                        {/* Pass name */}
                         <div className="space-y-1.5">
                             <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                Gate name <span className="normal-case tracking-normal">(optional)</span>
+                                Pass name <span className="normal-case tracking-normal">(optional)</span>
                             </label>
                             <input
                                 type="text"
@@ -491,9 +491,9 @@ export function CreateClient() {
                                     {phase === "deploying" ? (
                                         <span className="flex items-center justify-center gap-2">
                                             <Spinner sm />
-                                            Creating gate…
+                                            Creating…
                                         </span>
-                                    ) : "Create gate →"}
+                                    ) : "Create pass →"}
                                 </button>
 
                                 {phase === "error" && (
@@ -510,7 +510,7 @@ export function CreateClient() {
                 {isConnected && (myGates.length > 0 || myGatesLoading) && (
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                            <p className="text-[0.8rem] font-semibold text-text">Your gates</p>
+                            <p className="text-[0.8rem] font-semibold text-text">Your passes</p>
                             {myGatesLoading && (
                                 <div className="w-3.5 h-3.5 relative">
                                     <div className="absolute inset-0 border-2 border-accent/30 rounded-full" />
