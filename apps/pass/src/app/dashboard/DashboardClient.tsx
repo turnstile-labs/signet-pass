@@ -208,7 +208,7 @@ export function DashboardClient() {
                     </Link>
                     <div className="flex items-start justify-between gap-4 flex-wrap">
                         <h1 className="text-[1.8rem] font-bold tracking-tight text-white leading-tight">
-                            {name || "Pass Dashboard"}
+                            {name || "Verified passes"}
                         </h1>
                         <button
                             onClick={() => { setLoading(true); fetchEntries(); }}
@@ -271,7 +271,7 @@ export function DashboardClient() {
                         <div className="rounded-xl border border-border bg-surface px-6 py-8 flex items-end justify-between gap-4 flex-wrap">
                             <div>
                                 <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">
-                                    Verified passes
+                                    Verified
                                 </p>
                                 <p className="text-[4rem] font-bold text-white leading-none tabular-nums">
                                     {entries.length}

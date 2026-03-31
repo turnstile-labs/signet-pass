@@ -3,8 +3,8 @@ import { SiteNav } from "@/components/SiteNav";
 import { DashboardClient } from "./DashboardClient";
 
 export const metadata = {
-    title: "Pass Dashboard — Signet",
-    description: "View verified passes, copy your share link, and export your allowlist as CSV.",
+    title: "Verified passes — Signet Pass",
+    description: "See who verified, copy your share link, and export your allowlist as CSV.",
 };
 
 function Loading() {

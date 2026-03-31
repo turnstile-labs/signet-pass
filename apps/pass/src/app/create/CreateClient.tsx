@@ -373,7 +373,7 @@ export function CreateClient() {
                                             className="flex-shrink-0 text-[0.78rem] font-medium text-accent
                                                        hover:text-accent/80 transition-colors"
                                         >
-                                            Dashboard →
+                                            View allowlist →
                                         </Link>
                                     </div>
                                 ))}
@@ -448,7 +448,7 @@ export function CreateClient() {
                                         href={`/dashboard?contract=${deployedAddr}${name.trim() ? `&name=${encodeURIComponent(name.trim())}` : ""}`}
                                         className="text-[0.84rem] font-medium text-accent hover:text-accent/80 transition-colors"
                                     >
-                                        View dashboard →
+                                        View allowlist →
                                     </Link>
                                     <button
                                         onClick={() => { resetCreate(); setView("list"); }}
