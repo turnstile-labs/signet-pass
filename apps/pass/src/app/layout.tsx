@@ -24,22 +24,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className="flex flex-col min-h-screen">
                 <Providers>
                     <div className="flex-1">{children}</div>
-                    <footer className="border-t border-border mt-auto">
-                        <div className="max-w-3xl mx-auto px-5 py-6 flex flex-col sm:flex-row
-                                        sm:items-center sm:justify-between gap-3">
-                            <div className="space-y-0.5">
-                                <p className="font-mono text-[0.68rem] text-muted-2">
-                                    © {new Date().getFullYear()} Signet Pass
-                                </p>
-                                <p className="font-mono text-[0.62rem] text-muted-2/60">
-                                    ZK-verified access passes · Base Sepolia (testnet)
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-5">
-                                <a href="/how-it-works" className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">How it works</a>
-                                <a href="/developers"   className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Integrate</a>
-                                <a href="/terms"        className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Terms</a>
-                                <a href="/privacy"      className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Privacy</a>
+                    <footer className="border-t border-border">
+                        <div className="max-w-3xl mx-auto px-6 py-5 flex flex-wrap items-center
+                                        justify-between gap-4">
+                            <span className="font-mono text-[0.68rem] text-muted-2">
+                                © {new Date().getFullYear()} Signet
+                            </span>
+                            <div className="flex items-center gap-4">
+                                <a href="/developers" className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Integrate</a>
+                                <a href="/terms"      className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Terms</a>
+                                <a href="/privacy"    className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors">Privacy</a>
                             </div>
                         </div>
                     </footer>
