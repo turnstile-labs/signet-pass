@@ -203,7 +203,7 @@ export function BadgeGateClient() {
                 await switchChainAsync({ chainId: baseSepolia.id });
             }
 
-            const calls = [{ to: BADGE_CONTRACT, abi: BADGE_ABI, functionName: "mint" as const, args: [] }];
+            const calls = [{ address: BADGE_CONTRACT, abi: BADGE_ABI, functionName: "mint" as const, args: [] as const }];
 
             // Use EIP-5792 (gasless via Coinbase Smart Wallet) if available
             const caps = capabilities?.[baseSepolia.id];
