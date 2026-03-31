@@ -211,11 +211,12 @@ export function BadgeGateClient() {
     const mintedId = tokenId ? Number(tokenId) : undefined;
     const origin   = typeof window !== "undefined" ? window.location.origin : "https://signet-pass.vercel.app";
 
-    // ── Share links ───────────────────────────────────────────────────────────
+    // ── Share links — use token-specific URL so X/Farcaster unfurl the OG image ─
 
-    const shareText  = `I just minted a Signet Verified Member badge — ZK proof of crypto account history, on-chain, non-transferable.`;
-    const shareUrl   = `${origin}/demo/badge`;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    const shareText   = `I just minted a Signet Verified Member badge — ZK proof of crypto account history, on-chain, non-transferable.`;
+    // /demo/badge/<tokenId> has OG metadata + redirects to /demo/badge; gives crawlers the og:image
+    const shareUrl    = mintedId ? `${origin}/demo/badge/${mintedId}` : `${origin}/demo/badge`;
+    const twitterUrl  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
     const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}`;
 
     // ── Render ────────────────────────────────────────────────────────────────
