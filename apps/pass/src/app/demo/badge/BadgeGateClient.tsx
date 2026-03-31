@@ -222,6 +222,8 @@ export function BadgeGateClient() {
         `No KYC. No data upload. ~30 seconds in the browser.`,
         ``,
         `This is how @signetpass gates access — without identity.`,
+        ``,
+        shareUrl,
     ].join("\n");
 
     // Farcaster: crypto-native, technical detail lands well
@@ -232,10 +234,11 @@ export function BadgeGateClient() {
         `Nothing left my device. No KYC. The proof is on-chain forever.`,
         ``,
         `Build the same gate for your drop or presale 👇`,
+        ``,
         shareUrl,
     ].join("\n");
 
-    const twitterUrl  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(xText)}&url=${encodeURIComponent(shareUrl)}`;
+    const twitterUrl  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(xText)}`;
     const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}`;
 
     // ── Render ────────────────────────────────────────────────────────────────
