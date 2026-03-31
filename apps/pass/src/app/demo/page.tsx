@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 const DEMOS = [
     {
         href:        "/demo/presale",
-        eyebrow:     "Live demo · Base Sepolia",
-        title:       "SGNL Token Presale gate",
-        description: "Connect a wallet and prove your crypto history to get whitelisted. The full user flow — ZK proof in the browser, on-chain verification, content reveal — runs live.",
-        pills:       ["🔒 locked", "ZK proof · ~30 s", "isVerified() → true"],
+        eyebrow:     "Token presale · Base Sepolia",
+        title:       "SGNL — Private Round 1",
+        description: "Whitelist gate for a fictional token presale. Connect a wallet and verify your crypto account history to secure an allocation.",
+        tags:        ["Wallet required", "Any exchange", "Testnet"],
         status:      "active" as const,
     },
 ] as const;
@@ -42,7 +42,7 @@ export default function DemosPage() {
 
                 {/* Demo list */}
                 <div className="space-y-3">
-                    {DEMOS.map(({ href, eyebrow, title, description, pills, status }) => (
+                    {DEMOS.map(({ href, eyebrow, title, description, tags, status }) => (
                         <Link
                             key={href}
                             href={href}
@@ -73,13 +73,13 @@ export default function DemosPage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 mt-3 flex-wrap">
-                                {pills.map(pill => (
+                                {tags.map(tag => (
                                     <span
-                                        key={pill}
+                                        key={tag}
                                         className="text-[0.62rem] font-mono bg-bg border border-border
                                                    px-2 py-0.5 rounded-full text-muted-2"
                                     >
-                                        {pill}
+                                        {tag}
                                     </span>
                                 ))}
                             </div>

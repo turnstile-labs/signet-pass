@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata = {
@@ -204,23 +203,6 @@ export default function HowItWorksPage() {
                     </Callout>
                 </Section>
 
-                <div className="border-t border-border mt-14 pt-10 flex flex-col sm:flex-row gap-4">
-                    <Link
-                        href="/developers"
-                        className="bg-accent font-medium px-6 py-2.5 rounded-lg text-sm
-                                   hover:bg-accent/90 transition-colors text-center"
-                        style={{ color: "#fff" }}
-                    >
-                        Create a pass
-                    </Link>
-                    <Link
-                        href="/"
-                        className="border border-border px-6 py-2.5 rounded-lg text-sm text-muted
-                                   hover:text-text hover:border-text/30 transition-colors text-center"
-                    >
-                        ← Back to overview
-                    </Link>
-                </div>
 
             </main>
         </div>

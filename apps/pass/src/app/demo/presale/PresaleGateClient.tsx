@@ -249,24 +249,6 @@ export function PresaleGateClient() {
                     )}
                 </div>
 
-                {/* Deployer CTA */}
-                <div className="rounded-xl border border-border bg-surface px-5 py-4
-                                flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <p className="text-[0.85rem] font-semibold text-text">Create your own gate</p>
-                        <p className="text-[0.74rem] text-muted mt-0.5">
-                            Two minutes to deploy. No code required.
-                        </p>
-                    </div>
-                    <Link
-                        href="/developers"
-                        className="bg-accent text-[0.8rem] font-medium px-5 py-2.5
-                                   rounded-lg hover:bg-accent/90 transition-colors flex-shrink-0 text-center"
-                        style={{ color: "#fff" }}
-                    >
-                        Create a pass →
-                    </Link>
-                </div>
 
             </main>
         </div>
