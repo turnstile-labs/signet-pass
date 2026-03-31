@@ -13,11 +13,11 @@ import { SIGNET_PASS_ABI, isValidAddress, getPublicClient } from "@/lib/wagmi";
 // ── Contracts ─────────────────────────────────────────────────────────────────
 
 const PASS_CONTRACT = (
-    process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x2566081B73fE2e2340B95B36ccd2256584b64C8F"
+    process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x33caf63041f4a2f36df16af1497bf8f5a50218eb"
 ) as `0x${string}`;
 
 const BADGE_CONTRACT = (
-    process.env.NEXT_PUBLIC_DEMO_BADGE_CONTRACT ?? ""
+    process.env.NEXT_PUBLIC_DEMO_BADGE_CONTRACT ?? "0x79594813f2b5ce4747b9a885e3a10592b6f74526"
 ) as `0x${string}`;
 
 const DEMO_PASS_NAME = "Verified Member Badge";

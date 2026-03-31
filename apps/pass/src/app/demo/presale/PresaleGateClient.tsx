@@ -8,7 +8,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SIGNET_PASS_ABI, isValidAddress } from "@/lib/wagmi";
 
 const DEMO_CONTRACT = (
-    process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x2566081B73fE2e2340B95B36ccd2256584b64C8F"
+    process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x33caf63041f4a2f36df16af1497bf8f5a50218eb"
 ) as `0x${string}`;
 
 const DEMO_NAME = "SGNL Token Presale — Round 1";
