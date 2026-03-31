@@ -246,7 +246,7 @@ export default function DevelopersPage() {
                 {/* ── Header ──────────────────────────────────────────────── */}
                 <div>
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-3">
-                        Signet Pass · Developers
+                        Signet Pass · Integrate
                     </p>
                     <h1 className="text-[2rem] sm:text-[2.4rem] font-bold tracking-tight text-white leading-[1.1]">
                         Create. Copy. Ship.
