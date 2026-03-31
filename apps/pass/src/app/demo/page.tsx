@@ -19,6 +19,14 @@ const DEMOS = [
         tags:        ["Wallet required", "Any exchange", "Testnet"],
         status:      "active" as const,
     },
+    {
+        href:        "/demo/badge",
+        eyebrow:     "Soulbound NFT · Base Sepolia",
+        title:       "Verified Member Badge",
+        description: "Gate an on-chain mint with Signet. Verified wallets mint a non-transferable badge — one per address, forever on-chain.",
+        tags:        ["Wallet required", "On-chain mint", "Testnet"],
+        status:      "active" as const,
+    },
 ] as const;
 
 // ── Page ─────────────────────────────────────────────────────────────────────
