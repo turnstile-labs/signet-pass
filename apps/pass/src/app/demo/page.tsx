@@ -12,6 +12,14 @@ export const metadata: Metadata = {
 
 const DEMOS = [
     {
+        href:        "/demo/access",
+        eyebrow:     "Secret URL reveal · Community access",
+        title:       "Private Discord Invite",
+        description: "Gate a secret Discord invite behind a ZK proof. Verified wallets see the link — no bot, no role assignment, no Discord integration.",
+        tags:        ["Wallet required", "Any exchange", "Zero integration", "Testnet"],
+        status:      "active" as const,
+    },
+    {
         href:        "/demo/presale",
         eyebrow:     "Token presale · Base Sepolia",
         title:       "SGNL — Private Round 1",
@@ -25,14 +33,6 @@ const DEMOS = [
         title:       "Verified Member Badge",
         description: "Gate an on-chain mint with Signet. Verified wallets mint a non-transferable badge — one per address, forever on-chain.",
         tags:        ["Wallet required", "Any exchange", "On-chain mint", "Testnet"],
-        status:      "active" as const,
-    },
-    {
-        href:        "/demo/access",
-        eyebrow:     "Secret URL reveal · Community access",
-        title:       "Private Discord Invite",
-        description: "Gate a secret Discord invite behind a ZK proof. Verified wallets see the link — no bot, no role assignment, no Discord integration.",
-        tags:        ["Wallet required", "Any exchange", "Zero integration", "Testnet"],
         status:      "active" as const,
     },
 ] as const;
@@ -77,16 +77,11 @@ export default function DemosPage() {
                                         {description}
                                     </p>
                                 </div>
-                                <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                                    {status === "active" && (
-                                        <span className="text-[0.65rem] font-medium text-green">
-                                            ● active
-                                        </span>
-                                    )}
-                                    <span className="text-muted-2 group-hover:text-accent transition-colors text-sm">
-                                        →
+                                {status === "active" && (
+                                    <span className="text-[0.65rem] font-medium text-green flex-shrink-0">
+                                        ● active
                                     </span>
-                                </div>
+                                )}
                             </div>
                             <div className="flex items-center gap-2 mt-3 flex-wrap">
                                 {tags.map(tag => (
