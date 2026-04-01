@@ -89,9 +89,6 @@ export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
     const { switchChainAsync }     = useSwitchChain();
     const router                   = useRouter();
 
-    // Disconnect on every page visit so users experience the full connect flow each time
-    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
     const [phase,         setPhase]         = useState<Phase>("idle");
     const [contractInfo,  setContractInfo]  = useState<ContractInfo | null>(null);
     const [attestation,   setAttestation]   = useState<AttestationData | null>(null);

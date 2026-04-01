@@ -262,8 +262,8 @@ export function BadgeGateClient() {
                         Verified Member Badge
                     </h1>
                     <p className="text-[0.82rem] text-muted mt-2 leading-relaxed">
-                        Prove your exchange history once — mint a soulbound badge forever.
-                        No transfers. No fakes.
+                        Prove your exchange history once — mint a soulbound badge on-chain forever.
+                        One per wallet. No transfers. No fakes.
                     </p>
                 </div>
 
@@ -459,6 +459,31 @@ export function BadgeGateClient() {
                         </p>
                     </div>
                 )}
+
+                {/* How this works */}
+                <div className="rounded-xl border border-border bg-surface px-5 py-4 space-y-3">
+                    <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                        How this works
+                    </p>
+                    <div className="space-y-2">
+                        {[
+                            { step: "1", text: "Creator deploys a Signet gate linked to any ERC-721 contract — the NFT contract checks isVerified() before minting." },
+                            { step: "2", text: "User proves a crypto exchange account with a ZK email proof. ~30 seconds in the browser, nothing leaves your device." },
+                            { step: "3", text: "isVerified() returns true on-chain. Badge mints directly to wallet — soulbound, non-transferable, one per address." },
+                        ].map(({ step, text }) => (
+                            <div key={step} className="flex items-start gap-3">
+                                <span className="font-mono text-[0.65rem] text-muted-2 bg-bg border border-border
+                                                 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    {step}
+                                </span>
+                                <p className="text-[0.78rem] text-muted leading-relaxed">{text}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <p className="text-[0.67rem] text-muted-2 pt-1 border-t border-border">
+                        The badge contract is deployed on Base Sepolia — the mint and ZK proof are fully real.
+                    </p>
+                </div>
 
             </main>
         </div>

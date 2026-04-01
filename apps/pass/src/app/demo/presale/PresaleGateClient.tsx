@@ -7,6 +7,8 @@ import { ConnectKitButton } from "connectkit";
 import { SiteNav } from "@/components/SiteNav";
 import { SIGNET_PASS_ABI, isValidAddress } from "@/lib/wagmi";
 
+// ── Config ─────────────────────────────────────────────────────────────────────
+
 const DEMO_CONTRACT = (
     process.env.NEXT_PUBLIC_DEMO_CONTRACT ?? "0x653454ee8e92c479a97566864da2f0dc8b9a4b62"
 ) as `0x${string}`;
@@ -25,6 +27,7 @@ function shorten(addr: string) {
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
+// ── Presale dashboard (revealed content) ──────────────────────────────────────
 
 function PresaleDashboard({
     unlocked,
@@ -111,12 +114,27 @@ function PresaleDashboard({
                 </div>
             </div>
 
+            {unlocked && (
+                <div className="rounded-xl border border-green/20 bg-green/5 px-4 py-3">
+                    <p className="text-[0.75rem] text-green/80 leading-relaxed">
+                        <span className="font-semibold text-green">Verified.</span>
+                        {" "}Your proof is valid on every Signet-gated project —
+                        no re-proving needed.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
 
+// ── Main component ─────────────────────────────────────────────────────────────
+
 export function PresaleGateClient() {
     const { address, isConnected } = useAccount();
+    const { disconnect }           = useDisconnect();
+
+    // Disconnect on every page visit so users experience the full connect flow each time
+    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const { data: verified, isLoading: checking } = useReadContract({
         address:      DEMO_CONTRACT,
@@ -131,10 +149,6 @@ export function PresaleGateClient() {
     });
 
     const unlocked = isConnected && verified === true;
-    const { disconnect } = useDisconnect();
-
-    // Disconnect on every page visit so users experience the full connect flow each time
-    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const [verifyUrl, setVerifyUrl] = useState("");
     useEffect(() => {
@@ -151,9 +165,9 @@ export function PresaleGateClient() {
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-6">
+            <main className="flex-1 max-w-2xl mx-auto w-full px-5 py-10 space-y-6">
 
-                {/* Gate heading */}
+                {/* Heading */}
                 <div>
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">
                         Live demo · Base Sepolia
@@ -161,14 +175,18 @@ export function PresaleGateClient() {
                     <h1 className="text-[1.6rem] sm:text-[2rem] font-bold tracking-tight text-white leading-[1.1]">
                         SGNL Token Presale gate
                     </h1>
+                    <p className="text-[0.82rem] text-muted mt-2 leading-relaxed">
+                        Private round whitelist gated by crypto history.
+                        No forms. No Discord roles. Prove once, get in.
+                    </p>
                 </div>
 
                 {/* Gate card */}
                 <div className="relative rounded-2xl border border-border overflow-hidden">
                     <div
                         style={{
-                            filter:        unlocked ? "none" : "blur(5px)",
-                            transition:    "filter 0.6s ease",
+                            filter:        unlocked ? "none" : "blur(6px)",
+                            transition:    "filter 0.7s ease",
                             userSelect:    unlocked ? "auto" : "none",
                             pointerEvents: unlocked ? "auto" : "none",
                         }}
@@ -177,24 +195,27 @@ export function PresaleGateClient() {
                         <PresaleDashboard unlocked={unlocked} userAddr={address} />
                     </div>
 
-
                     {!unlocked && (
                         <div className="absolute inset-0 flex items-center justify-center
-                                        bg-bg/78 backdrop-blur-[3px] px-6">
-                            <div className="flex flex-col items-center text-center max-w-[300px] w-full">
+                                        bg-bg/80 backdrop-blur-[3px] px-6">
+                            <div className="flex flex-col items-center text-center max-w-[300px] w-full space-y-4">
+
                                 <div className="w-11 h-11 rounded-2xl border border-border bg-surface
-                                                flex items-center justify-center mb-4 text-xl">
+                                                flex items-center justify-center text-xl">
                                     🔒
                                 </div>
-                                <h3 className="text-[1rem] font-semibold text-white mb-1.5">
-                                    Private Round Whitelist
-                                </h3>
-                                <p className="text-[0.76rem] text-muted mb-3">
-                                    Prove you had a crypto exchange account to get whitelisted
-                                </p>
+
+                                <div>
+                                    <h3 className="text-[1rem] font-semibold text-white mb-1">
+                                        Private Round Whitelist
+                                    </h3>
+                                    <p className="text-[0.75rem] text-muted">
+                                        Prove you had a crypto exchange account to get whitelisted
+                                    </p>
+                                </div>
+
                                 <span className="inline-block font-mono text-[0.62rem] bg-surface
-                                                 border border-border px-2.5 py-1 rounded-full
-                                                 text-muted-2 mb-5">
+                                                 border border-border px-2.5 py-1 rounded-full text-muted-2">
                                     Any exchange
                                 </span>
 
@@ -251,6 +272,30 @@ export function PresaleGateClient() {
                     )}
                 </div>
 
+                {/* How this works */}
+                <div className="rounded-xl border border-border bg-surface px-5 py-4 space-y-3">
+                    <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
+                        How this works
+                    </p>
+                    <div className="space-y-2">
+                        {[
+                            { step: "1", text: "Creator deploys a Signet gate with token allocation criteria — no dev required." },
+                            { step: "2", text: "User proves a crypto exchange account with a ZK email proof. ~30 seconds in the browser." },
+                            { step: "3", text: "On-chain pass is issued. Wallet is whitelisted automatically — no spreadsheet, no Discord roles." },
+                        ].map(({ step, text }) => (
+                            <div key={step} className="flex items-start gap-3">
+                                <span className="font-mono text-[0.65rem] text-muted-2 bg-bg border border-border
+                                                 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    {step}
+                                </span>
+                                <p className="text-[0.78rem] text-muted leading-relaxed">{text}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <p className="text-[0.67rem] text-muted-2 pt-1 border-t border-border">
+                        The presale data is fictional — the wallet check and ZK proof are fully real.
+                    </p>
+                </div>
 
             </main>
         </div>
