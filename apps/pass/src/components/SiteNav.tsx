@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAccount } from "wagmi";
+import { ConnectKitButton } from "connectkit";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
@@ -32,9 +34,10 @@ function CloseIcon() {
 }
 
 export function SiteNav({ wide = true }: { wide?: boolean }) {
-    const pathname = usePathname();
-    const maxW     = wide ? "max-w-3xl" : "max-w-2xl";
-    const [open, setOpen] = useState(false);
+    const pathname          = usePathname();
+    const maxW              = wide ? "max-w-3xl" : "max-w-2xl";
+    const [open, setOpen]   = useState(false);
+    const { address, isConnected } = useAccount();
 
     // Close the mobile menu whenever the route changes
     useEffect(() => { setOpen(false); }, [pathname]);
@@ -94,6 +97,21 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                             </Link>
                         );
                     })}
+                    {/* Wallet — only visible when connected; clicking opens ConnectKit modal (incl. disconnect) */}
+                    {isConnected && address && (
+                        <ConnectKitButton.Custom>
+                            {({ show }) => (
+                                <button
+                                    onClick={show}
+                                    className="font-mono text-[0.68rem] text-muted-2 hover:text-text
+                                               border border-border hover:border-border/60
+                                               px-2.5 py-1 rounded-lg transition-colors"
+                                >
+                                    {address.slice(0, 6)}…{address.slice(-4)}
+                                </button>
+                            )}
+                        </ConnectKitButton.Custom>
+                    )}
                     <div className="ml-2 pl-2 border-l border-border">
                         <ThemeToggle />
                     </div>
@@ -145,6 +163,22 @@ export function SiteNav({ wide = true }: { wide?: boolean }) {
                                 </Link>
                             );
                         })}
+                        {/* Wallet disconnect — mobile, only when connected */}
+                        {isConnected && address && (
+                            <ConnectKitButton.Custom>
+                                {({ show }) => (
+                                    <button
+                                        onClick={() => { setOpen(false); show?.(); }}
+                                        className="flex items-center gap-2 px-4 py-3.5 rounded-xl w-full
+                                                   font-mono text-[0.82rem] text-muted-2
+                                                   hover:text-text hover:bg-surface-2/50 transition-colors text-left"
+                                    >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green flex-shrink-0" />
+                                        {address.slice(0, 6)}…{address.slice(-4)}
+                                    </button>
+                                )}
+                            </ConnectKitButton.Custom>
+                        )}
                     </div>
                 </div>
             )}

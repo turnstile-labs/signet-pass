@@ -32,12 +32,12 @@ export default function HomePage() {
                         Create a pass →
                     </Link>
                     <Link
-                        href="/how-it-works"
+                        href="/demo"
                         className="border border-border px-6 py-3 rounded-xl text-[0.9rem]
                                    text-muted hover:text-text hover:border-text/30
                                    transition-colors text-center"
                     >
-                        How it works
+                        See demos
                     </Link>
                 </div>
 

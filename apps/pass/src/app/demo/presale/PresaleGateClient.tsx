@@ -149,15 +149,6 @@ export function PresaleGateClient() {
 
             <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-6">
 
-                {/* Back link */}
-                <Link
-                    href="/demo"
-                    className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted
-                               hover:text-text transition-colors"
-                >
-                    ← Demos
-                </Link>
-
                 {/* Gate heading */}
                 <div>
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">

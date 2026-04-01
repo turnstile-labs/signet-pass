@@ -249,12 +249,6 @@ export function BadgeGateClient() {
 
             <main className="flex-1 max-w-2xl mx-auto w-full px-5 py-10 space-y-6">
 
-                {/* Back */}
-                <Link href="/demo"
-                      className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted hover:text-text transition-colors">
-                    ← Demos
-                </Link>
-
                 {/* Heading */}
                 <div>
                     <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">

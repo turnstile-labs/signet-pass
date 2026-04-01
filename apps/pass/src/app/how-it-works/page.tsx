@@ -52,14 +52,6 @@ export default function HowItWorksPage() {
 
             <main className="flex-1 max-w-3xl mx-auto w-full px-5 py-10 sm:py-14">
 
-                <Link
-                    href="/"
-                    className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted
-                               hover:text-text transition-colors mb-8"
-                >
-                    ← Overview
-                </Link>
-
                 <div className="mb-10 sm:mb-14">
                     <p className="font-mono text-[0.68rem] uppercase tracking-widest text-muted-2 mb-4">
                         Signet Protocol

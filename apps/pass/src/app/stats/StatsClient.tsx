@@ -127,14 +127,22 @@ export function StatsClient() {
 
                 {/* Header */}
                 <div>
-                    <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2 mb-2">
-                        Protocol · Base Sepolia testnet
-                    </p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <p className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-2">
+                            Protocol · Base Sepolia testnet
+                        </p>
+                        <span className="font-mono text-[0.58rem] uppercase tracking-wider
+                                         bg-amber/10 text-amber border border-amber/25
+                                         px-2 py-0.5 rounded-full">
+                            Signet internal
+                        </span>
+                    </div>
                     <h1 className="text-[1.8rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1]">
-                        Signet Pass stats
+                        Protocol stats
                     </h1>
                     <p className="text-[0.82rem] text-muted mt-2">
                         Live on-chain data — every number is queryable by anyone.
+                        Auth-gated access coming before mainnet.
                     </p>
                 </div>
 
