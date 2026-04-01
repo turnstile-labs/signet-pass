@@ -90,6 +90,9 @@ function BadgePreview({ tokenId, locked = false }: { tokenId?: number; locked?: 
 export function BadgeGateClient() {
     const { address, isConnected }  = useAccount();
     const { disconnect }             = useDisconnect();
+
+    // Disconnect on every page visit so users experience the full connect flow each time
+    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
     const { data: walletClient }    = useWalletClient({ chainId: baseSepolia.id });
     const { switchChainAsync }      = useSwitchChain();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

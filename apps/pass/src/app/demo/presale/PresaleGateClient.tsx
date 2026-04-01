@@ -133,6 +133,9 @@ export function PresaleGateClient() {
     const unlocked = isConnected && verified === true;
     const { disconnect } = useDisconnect();
 
+    // Disconnect on every page visit so users experience the full connect flow each time
+    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const [verifyUrl, setVerifyUrl] = useState("");
     useEffect(() => {
         const base = process.env.NEXT_PUBLIC_PASS_URL || window.location.origin;

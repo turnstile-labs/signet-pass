@@ -91,6 +91,10 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
 
 export function CreateClient() {
     const { address, isConnected } = useAccount();
+
+    // Disconnect on every page visit so users experience the full connect flow each time
+    useEffect(() => { disconnect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const { data: walletClient }   = useWalletClient({ chainId: baseSepolia.id });
     const { switchChainAsync }     = useSwitchChain();
     const { disconnect }           = useDisconnect();
