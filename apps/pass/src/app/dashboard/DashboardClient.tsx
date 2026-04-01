@@ -200,12 +200,6 @@ export function DashboardClient() {
 
                 {/* Header */}
                 <div>
-                    <Link
-                        href="/create"
-                        className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted hover:text-text transition-colors mb-4"
-                    >
-                        ← My passes
-                    </Link>
                     <div className="flex items-start justify-between gap-4 flex-wrap">
                         <h1 className="text-[1.8rem] font-bold tracking-tight text-white leading-tight">
                             {name || "Verified passes"}

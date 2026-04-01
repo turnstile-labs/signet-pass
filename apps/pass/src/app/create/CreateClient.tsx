@@ -385,15 +385,6 @@ export function CreateClient() {
                 {/* ════════════════ CREATE VIEW ════════════════ */}
                 {view === "create" && (
                     <>
-                        {/* Back link */}
-                        <button
-                            onClick={() => { resetCreate(); setView("list"); }}
-                            className="inline-flex items-center gap-1.5 text-[0.8rem] text-muted
-                                       hover:text-text transition-colors cursor-pointer"
-                        >
-                            ← My passes
-                        </button>
-
                         {/* Header */}
                         <div>
                             <h1 className="text-[2rem] sm:text-[2.2rem] font-bold tracking-tight
@@ -464,13 +455,7 @@ export function CreateClient() {
                                 </Link>
 
                                 {/* Secondary links */}
-                                <div className="flex items-center justify-between px-1">
-                                    <button
-                                        onClick={() => { resetCreate(); setView("list"); }}
-                                        className="text-[0.8rem] text-muted hover:text-text transition-colors cursor-pointer"
-                                    >
-                                        ← My passes
-                                    </button>
+                                <div className="flex items-center justify-end px-1">
                                     <a
                                         href={`https://sepolia.basescan.org/tx/${deployedTx}`}
                                         target="_blank"
