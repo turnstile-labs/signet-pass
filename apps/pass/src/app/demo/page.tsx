@@ -27,6 +27,14 @@ const DEMOS = [
         tags:        ["Wallet required", "Any exchange", "On-chain mint", "Testnet"],
         status:      "active" as const,
     },
+    {
+        href:        "/demo/access",
+        eyebrow:     "Secret URL reveal · Community access",
+        title:       "Private Discord Invite",
+        description: "Gate a secret Discord invite behind a ZK proof. Verified wallets see the link — no bot, no role assignment, no Discord integration.",
+        tags:        ["Wallet required", "Any exchange", "Zero integration", "Testnet"],
+        status:      "active" as const,
+    },
 ] as const;
 
 // ── Page ─────────────────────────────────────────────────────────────────────
