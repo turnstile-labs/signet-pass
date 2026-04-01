@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useDisconnect } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { SiteNav } from "@/components/SiteNav";
 import { SIGNET_PASS_ABI, isValidAddress } from "@/lib/wagmi";
@@ -131,6 +131,7 @@ export function PresaleGateClient() {
     });
 
     const unlocked = isConnected && verified === true;
+    const { disconnect } = useDisconnect();
 
     const [verifyUrl, setVerifyUrl] = useState("");
     useEffect(() => {
@@ -233,6 +234,13 @@ export function PresaleGateClient() {
                                         <p className="text-[0.67rem] text-muted-2 leading-snug">
                                             Drop an exchange email · ZK proof in ~30 s · nothing leaves your device
                                         </p>
+                                        <button
+                                            onClick={() => disconnect()}
+                                            className="w-full text-[0.67rem] text-muted-2 hover:text-muted
+                                                       transition-colors pt-0.5"
+                                        >
+                                            {address?.slice(0, 6)}…{address?.slice(-4)} · Disconnect
+                                        </button>
                                     </div>
                                 )}
                             </div>

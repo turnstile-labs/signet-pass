@@ -306,6 +306,22 @@ export function CreateClient() {
                             </button>
                         </div>
 
+                        {/* Wallet status — contextual, only when connected */}
+                        {isConnected && address && (
+                            <div className="flex items-center justify-between px-0.5">
+                                <span className="font-mono text-[0.67rem] text-muted-2">
+                                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-green mr-1.5 align-middle" />
+                                    {address.slice(0, 6)}…{address.slice(-4)}
+                                </span>
+                                <button
+                                    onClick={() => disconnect()}
+                                    className="font-mono text-[0.67rem] text-muted-2 hover:text-muted transition-colors"
+                                >
+                                    Disconnect
+                                </button>
+                            </div>
+                        )}
+
                         {/* Passes list */}
                         {!isConnected ? (
                             <div className="rounded-2xl border border-dashed border-border p-10

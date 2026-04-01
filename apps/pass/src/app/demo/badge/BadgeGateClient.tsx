@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useAccount, useReadContract, useWalletClient, useSwitchChain } from "wagmi";
+import { useAccount, useReadContract, useWalletClient, useSwitchChain, useDisconnect } from "wagmi";
 import { useCapabilities, useWriteContracts } from "wagmi/experimental";
 import { waitForCallsStatus } from "viem/experimental";
 import { ConnectKitButton } from "connectkit";
@@ -89,6 +89,7 @@ function BadgePreview({ tokenId, locked = false }: { tokenId?: number; locked?: 
 
 export function BadgeGateClient() {
     const { address, isConnected }  = useAccount();
+    const { disconnect }             = useDisconnect();
     const { data: walletClient }    = useWalletClient({ chainId: baseSepolia.id });
     const { switchChainAsync }      = useSwitchChain();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -412,6 +413,12 @@ export function BadgeGateClient() {
                                             <p className="text-[0.7rem] text-red leading-snug">{errorMsg}</p>
                                         )}
                                         <p className="text-[0.67rem] text-green/70">✓ Eligible — attestation verified</p>
+                                        <button
+                                            onClick={() => disconnect()}
+                                            className="w-full text-[0.67rem] text-muted-2 hover:text-muted transition-colors pt-0.5"
+                                        >
+                                            {address?.slice(0, 6)}…{address?.slice(-4)} · Disconnect
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="w-full space-y-2.5">
@@ -427,6 +434,12 @@ export function BadgeGateClient() {
                                         <p className="text-[0.67rem] text-muted-2 leading-snug">
                                             Drop an exchange email · ZK proof in ~30 s · nothing leaves your device
                                         </p>
+                                        <button
+                                            onClick={() => disconnect()}
+                                            className="w-full text-[0.67rem] text-muted-2 hover:text-muted transition-colors pt-0.5"
+                                        >
+                                            {address?.slice(0, 6)}…{address?.slice(-4)} · Disconnect
+                                        </button>
                                     </div>
                                 )}
                             </div>
