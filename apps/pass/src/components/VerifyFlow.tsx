@@ -602,9 +602,15 @@ export function VerifyFlow({ contractAddress, passName, redirectTo }: Props) {
                         {ex ? <> · <span className="font-medium text-text">{ex.label}</span></> : null}.
                     </p>
                     {contractInfo.feePerCheck > 0n && (
-                        <div className="flex items-center justify-between pt-2 border-t border-green/15 text-[0.82rem]">
-                            <span className="text-muted">Fee</span>
-                            <span className="font-mono font-medium text-text">{formatEth(contractInfo.feePerCheck)}</span>
+                        <div className="pt-2 border-t border-green/15 space-y-1.5">
+                            <div className="flex items-center justify-between text-[0.82rem]">
+                                <span className="text-muted">Signet protocol fee</span>
+                                <span className="font-mono font-medium text-text">{formatEth(contractInfo.feePerCheck)}</span>
+                            </div>
+                            <p className="text-[0.7rem] text-muted-2 leading-relaxed">
+                                One-time fee paid directly to Signet. Your pass is then valid on
+                                every Signet-gated project — no re-paying, ever.
+                            </p>
                         </div>
                     )}
                 </div>

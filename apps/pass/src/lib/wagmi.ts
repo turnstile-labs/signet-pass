@@ -9,7 +9,7 @@ export const ATTESTATION_CACHE_ADDRESS = _SIGNET_ADDRESSES.baseSepolia;
 // Factory is deployed by Signet — treasury and fee are baked in.
 // Founders only configure cutoff and exchange filter.
 export const FACTORY_ADDRESS = (
-    process.env.NEXT_PUBLIC_FACTORY_ADDRESS ?? "0x19F2d083BF21Bb7eB95893aDc28D0D9Cb61F22Bf"
+    process.env.NEXT_PUBLIC_FACTORY_ADDRESS ?? "0xe97b2629dc1bff3d7445a534c4182a7d14003dc4"
 ) as `0x${string}`;
 
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
@@ -191,6 +191,7 @@ export const SIGNET_PASS_ABI = [
     { inputs: [{ type: "address", name: "wallet" }], name: "isEligible",    outputs: [{ type: "bool"    }], stateMutability: "view",    type: "function" },
     { inputs: [],                                  name: "verify",           outputs: [],                    stateMutability: "payable", type: "function" },
     { anonymous: false, inputs: [{ indexed: true, name: "wallet", type: "address" }], name: "Verified", type: "event" },
+    { anonymous: false, inputs: [{ indexed: true, name: "pass", type: "address" }, { indexed: true, name: "wallet", type: "address" }, { name: "amount", type: "uint256" }], name: "FeeCollected", type: "event" },
     { inputs: [{ name: "sent",   type: "uint256" }, { name: "required", type: "uint256" }], name: "InsufficientFee",   type: "error" },
     { inputs: [{ name: "wallet", type: "address" }],                                        name: "AlreadyVerified",   type: "error" },
     { inputs: [{ name: "wallet", type: "address" }],                                        name: "SignetNoAttestation",  type: "error" },
@@ -201,8 +202,12 @@ export const SIGNET_PASS_ABI = [
 // ── Signet Pass Factory ABI ───────────────────────────────────────────────────
 
 export const SIGNET_PASS_FACTORY_ABI = [
-    { inputs: [],  name: "signetFee",      outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
-    { inputs: [],  name: "signetTreasury", outputs: [{ type: "address" }], stateMutability: "view", type: "function" },
+    { inputs: [],                                    name: "signetFee",      outputs: [{ type: "uint256" }], stateMutability: "view",       type: "function" },
+    { inputs: [],                                    name: "signetTreasury", outputs: [{ type: "address" }], stateMutability: "view",       type: "function" },
+    { inputs: [],                                    name: "owner",          outputs: [{ type: "address" }], stateMutability: "view",       type: "function" },
+    { inputs: [{ name: "newFee",   type: "uint256" }], name: "setFee",       outputs: [],                    stateMutability: "nonpayable", type: "function" },
+    { inputs: [{ name: "newOwner", type: "address" }], name: "transferOwnership", outputs: [],               stateMutability: "nonpayable", type: "function" },
+    { anonymous: false, inputs: [{ name: "oldFee", type: "uint256" }, { name: "newFee", type: "uint256" }], name: "FeeUpdated", type: "event" },
     {
         inputs: [
             { name: "cutoff",        type: "uint256"   },

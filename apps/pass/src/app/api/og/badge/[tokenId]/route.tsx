@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 const BADGE_CONTRACT = (
-    process.env.NEXT_PUBLIC_DEMO_BADGE_CONTRACT ?? "0xff795afa87d5f81b40870f1feb0ea40fdb0be147"
+    process.env.NEXT_PUBLIC_DEMO_BADGE_CONTRACT ?? "0x96643e54695ca91682e4fe4f3a96f025108a442c"
 );
 const RPC_URL = "https://sepolia.base.org";
 

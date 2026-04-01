@@ -58,6 +58,9 @@ contract SignetPass is SignetGated, ReentrancyGuard {
     // ── Events / Errors ───────────────────────────────────────────────────────
 
     event Verified(address indexed wallet);
+    /// @notice Emitted on every successful verify() when a fee is charged.
+    ///         Queryable by Signet to track protocol revenue across all passes.
+    event FeeCollected(address indexed pass, address indexed wallet, uint256 amount);
 
     error InsufficientFee(uint256 sent, uint256 required);
     error AlreadyVerified(address wallet);
@@ -120,7 +123,10 @@ contract SignetPass is SignetGated, ReentrancyGuard {
         }
 
         verified[msg.sender] = true;
-        if (msg.value > 0) treasury.transfer(msg.value);
+        if (msg.value > 0) {
+            treasury.transfer(msg.value);
+            emit FeeCollected(address(this), msg.sender, msg.value);
+        }
         emit Verified(msg.sender);
     }
 
