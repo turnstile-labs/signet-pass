@@ -519,7 +519,7 @@ export function CreateClient() {
                                                        transition-colors [color-scheme:dark]"
                                         />
                                         <p className="text-[0.68rem] text-muted-2">
-                                            {cutoffDate ? "Only accounts registered before this date qualify." : "No cutoff — all accounts qualify."}
+                                            {cutoffDate ? "Account must have been registered before this date." : "No date restriction."}
                                         </p>
                                     </div>
 
@@ -530,7 +530,7 @@ export function CreateClient() {
                                                 Exchange
                                             </label>
                                             <span className="text-[0.67rem] text-muted-2">
-                                                {selectedIds.length === 0 ? "Any exchange accepted" : `${selectedIds.length} selected`}
+                                                {selectedIds.length === 0 ? "Any exchange" : `${selectedIds.length} selected`}
                                             </span>
                                         </div>
                                         <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
@@ -554,8 +554,8 @@ export function CreateClient() {
                                         </div>
                                         <p className="text-[0.68rem] text-muted-2">
                                             {selectedIds.length === 0
-                                                ? "Leave empty to accept all supported exchanges."
-                                                : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`}
+                                                ? "No restriction — any supported exchange qualifies."
+                                                : `Restricted to ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} only.`}
                                         </p>
                                     </div>
                                 </div>
