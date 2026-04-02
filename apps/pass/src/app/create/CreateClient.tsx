@@ -502,7 +502,7 @@ export function CreateClient() {
                                 />
 
                                 {/* Criteria — always visible */}
-                                <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
+                                <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4 overflow-hidden">
 
                                     {/* Account cutoff */}
                                     <div className="space-y-1.5">
@@ -513,7 +513,7 @@ export function CreateClient() {
                                             type="date"
                                             value={cutoffDate}
                                             onChange={e => setCutoffDate(e.target.value)}
-                                            className="w-full bg-surface border border-border rounded-xl
+                                            className="w-full min-w-0 max-w-full bg-surface border border-border rounded-xl
                                                        px-3.5 py-2.5 text-[0.82rem] text-text
                                                        outline-none focus:border-accent/50
                                                        transition-colors [color-scheme:dark]"

@@ -16,9 +16,9 @@ export const wagmiConfig = createConfig({
     ssr:    true,
     chains: [baseSepolia, base],
     connectors: [
-        injected(),
-        metaMask({ dappMetadata: { name: APP_METADATA.name, url: APP_METADATA.url, iconUrl: APP_METADATA.icons[0] } }),
         coinbaseWallet({ appName: APP_METADATA.name, appLogoUrl: APP_METADATA.icons[0] }),
+        metaMask({ dappMetadata: { name: APP_METADATA.name, url: APP_METADATA.url, iconUrl: APP_METADATA.icons[0] } }),
+        injected(),
         ...(projectId ? [walletConnect({ projectId, metadata: APP_METADATA })] : []),
     ],
     transports: {
