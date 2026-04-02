@@ -293,58 +293,32 @@ export function DashboardClient() {
                             </div>
                         ) : (
                             <div className="rounded-xl border border-border bg-surface overflow-hidden">
-                                {/* Desktop header — hidden on mobile */}
-                                <div className="hidden sm:grid grid-cols-[1fr_auto_auto] border-b border-border px-4 py-2.5 gap-4">
-                                    <span className="font-mono text-[0.62rem] uppercase tracking-widest text-muted-2">Wallet</span>
-                                    <span className="font-mono text-[0.62rem] uppercase tracking-widest text-muted-2">Verified</span>
-                                    <span className="font-mono text-[0.62rem] uppercase tracking-widest text-muted-2">Tx</span>
-                                </div>
                                 <div className="divide-y divide-border max-h-[520px] overflow-y-auto">
                                     {entries.map((e, i) => (
                                         <div
                                             key={e.txHash || i}
-                                            className="px-4 py-3 hover:bg-surface-2/40 transition-colors"
+                                            className="flex items-start justify-between gap-3 px-4 py-3
+                                                       hover:bg-surface-2/40 transition-colors"
                                         >
-                                            {/* Mobile: stacked layout */}
-                                            <div className="flex items-start justify-between gap-3 sm:hidden">
-                                                <div className="min-w-0 flex-1 space-y-0.5">
-                                                    <div className="flex items-center gap-1.5 min-w-0">
-                                                        <span className="font-mono text-[0.75rem] text-text truncate">
-                                                            {e.wallet ? `${e.wallet.slice(0, 10)}…${e.wallet.slice(-8)}` : "—"}
-                                                        </span>
-                                                        <CopyBtn text={e.wallet} />
-                                                    </div>
-                                                    <p className="font-mono text-[0.65rem] text-muted-2">
-                                                        {e.timestamp ? formatDate(e.timestamp) : "—"}
-                                                    </p>
-                                                </div>
-                                                <a
-                                                    href={`https://sepolia.basescan.org/tx/${e.txHash}`}
-                                                    target="_blank" rel="noopener noreferrer"
-                                                    className="flex-shrink-0 p-2 font-mono text-[0.72rem] text-muted-2 hover:text-accent transition-colors"
-                                                >
-                                                    ↗
-                                                </a>
-                                            </div>
-                                            {/* Desktop: grid layout */}
-                                            <div className="hidden sm:grid grid-cols-[1fr_auto_auto] gap-4 items-center">
-                                                <div className="flex items-center gap-2 min-w-0">
+                                            <div className="min-w-0 flex-1 space-y-0.5">
+                                                <div className="flex items-center gap-1.5 min-w-0">
                                                     <span className="font-mono text-[0.75rem] text-text truncate">
                                                         {e.wallet ? `${e.wallet.slice(0, 10)}…${e.wallet.slice(-8)}` : "—"}
                                                     </span>
                                                     <CopyBtn text={e.wallet} />
                                                 </div>
-                                                <span className="font-mono text-[0.72rem] text-muted whitespace-nowrap">
+                                                <p className="font-mono text-[0.65rem] text-muted-2">
                                                     {e.timestamp ? formatDate(e.timestamp) : "—"}
-                                                </span>
-                                                <a
-                                                    href={`https://sepolia.basescan.org/tx/${e.txHash}`}
-                                                    target="_blank" rel="noopener noreferrer"
-                                                    className="font-mono text-[0.68rem] text-muted-2 hover:text-accent transition-colors p-1"
-                                                >
-                                                    ↗
-                                                </a>
+                                                </p>
                                             </div>
+                                            <a
+                                                href={`https://sepolia.basescan.org/tx/${e.txHash}`}
+                                                target="_blank" rel="noopener noreferrer"
+                                                className="flex-shrink-0 p-2 font-mono text-[0.72rem]
+                                                           text-muted-2 hover:text-accent transition-colors"
+                                            >
+                                                ↗
+                                            </a>
                                         </div>
                                     ))}
                                 </div>

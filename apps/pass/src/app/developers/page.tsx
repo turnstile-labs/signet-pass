@@ -508,7 +508,7 @@ export default function DevelopersPage() {
                                     }`}
                                 >
                                     {t.label}
-                                    <span className={`hidden sm:block text-[0.64rem] font-normal mt-0.5 ${tab === t.id ? "text-accent" : "text-muted-2"}`}>
+                                    <span className={`text-[0.64rem] font-normal mt-0.5 ${tab === t.id ? "text-accent" : "text-muted-2"}`}>
                                         {t.hint}
                                     </span>
                                 </button>
