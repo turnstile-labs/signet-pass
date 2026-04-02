@@ -270,7 +270,6 @@ export function CreateClient() {
         setName("");
         setCutoffDate("");
         setSelectedIds([]);
-        setAdvanced(false);
     }
 
     // ── Render ────────────────────────────────────────────────────────────────
