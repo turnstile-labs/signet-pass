@@ -60,6 +60,7 @@ function oneYearAgo(): string {
 }
 
 function dateToUnix(s: string): bigint {
+    if (!s) return 0n; // empty = no cutoff (contract accepts all timestamps when cutoff is 0)
     return BigInt(Math.floor(new Date(s + "T00:00:00Z").getTime() / 1000));
 }
 
@@ -174,7 +175,7 @@ export function CreateClient() {
 
     // ── Deploy ────────────────────────────────────────────────────────────────
     const [name,        setName]        = useState("");
-    const [cutoffDate,  setCutoffDate]  = useState(oneYearAgo);
+    const [cutoffDate,  setCutoffDate]  = useState("");
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const toggleExchange = (id: string) =>
@@ -267,7 +268,7 @@ export function CreateClient() {
         setDeployedAddr("");
         setDeployedTx("");
         setName("");
-        setCutoffDate(oneYearAgo());
+        setCutoffDate("");
         setSelectedIds([]);
         setAdvanced(false);
     }
@@ -491,21 +492,15 @@ export function CreateClient() {
                             <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
 
                                 {/* Pass name */}
-                                <div className="space-y-1.5">
-                                    <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                        Pass name{" "}
-                                        <span className="normal-case tracking-normal">(optional)</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={e => setName(e.target.value)}
-                                        placeholder="e.g. OG Holders, Presale Round 1"
-                                        className="w-full bg-bg border border-border rounded-xl px-3.5 py-2.5
-                                                   text-[0.88rem] text-text placeholder:text-muted-2
-                                                   outline-none focus:border-accent/50 transition-colors"
-                                    />
-                                </div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder="Pass name (optional)"
+                                    className="w-full bg-bg border border-border rounded-xl px-3.5 py-3
+                                               text-[0.95rem] text-text placeholder:text-muted-2
+                                               outline-none focus:border-accent/50 transition-colors"
+                                />
 
                                 {/* Criteria — always visible */}
                                 <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
@@ -525,7 +520,7 @@ export function CreateClient() {
                                                        transition-colors [color-scheme:dark]"
                                         />
                                         <p className="text-[0.68rem] text-muted-2">
-                                            Only accounts registered before this date qualify.
+                                            {cutoffDate ? "Only accounts registered before this date qualify." : "No cutoff — all accounts qualify."}
                                         </p>
                                     </div>
 
@@ -575,7 +570,7 @@ export function CreateClient() {
                                                            font-medium py-3 text-[0.88rem] text-text
                                                            hover:border-accent/50 hover:text-accent
                                                            transition-colors cursor-pointer">
-                                                Connect wallet to create
+                                                Continue →
                                             </button>
                                         )}
                                     </ConnectKitButton.Custom>
