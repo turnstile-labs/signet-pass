@@ -176,7 +176,6 @@ export function CreateClient() {
     const [name,        setName]        = useState("");
     const [cutoffDate,  setCutoffDate]  = useState(oneYearAgo);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [advanced,    setAdvanced]    = useState(false);
 
     const toggleExchange = (id: string) =>
         setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -488,6 +487,7 @@ export function CreateClient() {
                             </div>
                         ) : (
                             /* ── Form ─────────────────────────────────────── */
+                            <>
                             <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
 
                                 {/* Pass name */}
@@ -507,8 +507,67 @@ export function CreateClient() {
                                     />
                                 </div>
 
-                                {/* Connect wallet */}
-                                {!isConnected && (
+                                {/* Criteria — always visible */}
+                                <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
+
+                                    {/* Account cutoff */}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                            Account cutoff
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={cutoffDate}
+                                            onChange={e => setCutoffDate(e.target.value)}
+                                            className="w-full bg-surface border border-border rounded-xl
+                                                       px-3.5 py-2.5 text-[0.82rem] text-text
+                                                       outline-none focus:border-accent/50
+                                                       transition-colors [color-scheme:dark]"
+                                        />
+                                        <p className="text-[0.68rem] text-muted-2">
+                                            Only accounts registered before this date qualify.
+                                        </p>
+                                    </div>
+
+                                    {/* Exchange filter */}
+                                    <div className="space-y-2">
+                                        <div className="flex items-baseline justify-between gap-2">
+                                            <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                                Exchange
+                                            </label>
+                                            <span className="text-[0.67rem] text-muted-2">
+                                                {selectedIds.length === 0 ? "Any exchange accepted" : `${selectedIds.length} selected`}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+                                            {EXCHANGE_OPTIONS.map(ex => {
+                                                const on = selectedIds.includes(ex.id);
+                                                return (
+                                                    <button
+                                                        key={ex.id}
+                                                        onClick={() => toggleExchange(ex.id)}
+                                                        className={`rounded-xl border px-2 py-2.5 text-left
+                                                                    transition-colors cursor-pointer ${
+                                                            on
+                                                                ? "border-accent/50 bg-accent/10 text-accent"
+                                                                : "border-border bg-surface hover:border-border-h text-muted"
+                                                        }`}
+                                                    >
+                                                        <p className="text-[0.74rem] font-medium leading-tight">{ex.label}</p>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                        <p className="text-[0.68rem] text-muted-2">
+                                            {selectedIds.length === 0
+                                                ? "Leave empty to accept all supported exchanges."
+                                                : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Connect wallet or deploy */}
+                                {!isConnected ? (
                                     <ConnectKitButton.Custom>
                                         {({ show }) => (
                                             <button onClick={show}
@@ -516,131 +575,54 @@ export function CreateClient() {
                                                            font-medium py-3 text-[0.88rem] text-text
                                                            hover:border-accent/50 hover:text-accent
                                                            transition-colors cursor-pointer">
-                                                Connect wallet to continue
+                                                Connect wallet to create
                                             </button>
                                         )}
                                     </ConnectKitButton.Custom>
+                                ) : (
+                                    <button
+                                        onClick={handleDeploy}
+                                        disabled={phase === "deploying" || !FACTORY_ADDRESS}
+                                        className="w-full rounded-xl bg-accent font-semibold py-3 text-[0.9rem]
+                                                   hover:opacity-90 transition-opacity disabled:opacity-50
+                                                   disabled:cursor-not-allowed cursor-pointer"
+                                        style={{ color: "#fff" }}
+                                    >
+                                        {phase === "deploying" ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                </svg>
+                                                Creating…
+                                            </span>
+                                        ) : "Create pass →"}
+                                    </button>
                                 )}
 
-                                {/* Advanced + deploy */}
-                                {isConnected && (
-                                    <>
-                                        <div>
-                                            <button
-                                                onClick={() => setAdvanced(v => !v)}
-                                                className="flex items-center gap-1.5 text-[0.74rem] text-muted
-                                                           hover:text-text transition-colors cursor-pointer"
-                                            >
-                                                <span className={`transition-transform duration-150 text-[0.6rem] ${advanced ? "rotate-90" : ""}`}>▸</span>
-                                                Settings
-                                                {!advanced && (
-                                                    <span className="font-mono text-[0.65rem] text-muted-2 ml-1 truncate">
-                                                        — cutoff: {cutoffDate} ·{" "}
-                                                        {selectedIds.length === 0
-                                                            ? "any exchange"
-                                                            : selectedIds.length === 1
-                                                                ? EXCHANGE_OPTIONS.find(e => e.id === selectedIds[0])?.label
-                                                                : `${selectedIds.length} exchanges`}
-                                                    </span>
-                                                )}
-                                            </button>
-
-                                            {advanced && (
-                                                <div className="mt-3 rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
-                                                    <div className="space-y-1.5">
-                                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                            Account cutoff
-                                                        </label>
-                                                        <input
-                                                            type="date"
-                                                            value={cutoffDate}
-                                                            onChange={e => setCutoffDate(e.target.value)}
-                                                            className="w-full bg-surface border border-border rounded-xl
-                                                                       px-3.5 py-2.5 text-[0.82rem] text-text
-                                                                       outline-none focus:border-accent/50
-                                                                       transition-colors [color-scheme:dark]"
-                                                        />
-                                                        <p className="text-[0.68rem] text-muted-2">
-                                                            Only accounts registered before this date qualify.
-                                                        </p>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                            Exchange filter
-                                                            <span className="ml-2 normal-case tracking-normal text-muted-2">
-                                                                — leave empty to accept all
-                                                            </span>
-                                                        </label>
-                                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-                                                            {EXCHANGE_OPTIONS.map(ex => {
-                                                                const on = selectedIds.includes(ex.id);
-                                                                return (
-                                                                    <button
-                                                                        key={ex.id}
-                                                                        onClick={() => toggleExchange(ex.id)}
-                                                                        className={`rounded-xl border px-2 py-2.5 text-left
-                                                                                    transition-colors cursor-pointer ${
-                                                                            on
-                                                                                ? "border-accent/50 bg-accent/10 text-accent"
-                                                                                : "border-border bg-surface hover:border-border-h text-muted"
-                                                                        }`}
-                                                                    >
-                                                                        <p className="text-[0.74rem] font-medium leading-tight">{ex.label}</p>
-                                                                    </button>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                        <p className="text-[0.68rem] text-muted-2">
-                                                            {selectedIds.length === 0
-                                                                ? "Any supported exchange qualifies."
-                                                                : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="space-y-2 pt-1">
-                                            <div className="flex items-center justify-between">
-                                                <p className="font-mono text-[0.68rem] text-muted-2">
-                                                    {address ? `${address.slice(0, 8)}…${address.slice(-6)}` : ""}
-                                                </p>
-                                                <button
-                                                    onClick={() => disconnect()}
-                                                    className="font-mono text-[0.68rem] text-muted-2 hover:text-muted
-                                                               transition-colors cursor-pointer"
-                                                >
-                                                    Disconnect
-                                                </button>
-                                            </div>
-                                            <button
-                                                onClick={handleDeploy}
-                                                disabled={phase === "deploying" || !FACTORY_ADDRESS}
-                                                className="w-full rounded-xl bg-accent font-semibold py-3 text-[0.9rem]
-                                                           hover:opacity-90 transition-opacity disabled:opacity-50
-                                                           disabled:cursor-not-allowed cursor-pointer"
-                                                style={{ color: "#fff" }}
-                                            >
-                                                {phase === "deploying" ? (
-                                                    <span className="flex items-center justify-center gap-2">
-                                                        <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                                        </svg>
-                                                        Creating…
-                                                    </span>
-                                                ) : "Create pass →"}
-                                            </button>
-                                        </div>
-
-                                        {phase === "error" && (
-                                            <div className="rounded-xl border border-red/25 bg-red/5 px-4 py-3">
-                                                <p className="font-mono text-[0.72rem] text-red">{errorMsg}</p>
-                                            </div>
-                                        )}
-                                    </>
+                                {phase === "error" && (
+                                    <div className="rounded-xl border border-red/25 bg-red/5 px-4 py-3">
+                                        <p className="font-mono text-[0.72rem] text-red">{errorMsg}</p>
+                                    </div>
                                 )}
                             </div>
+
+                            {/* Disconnect — outside the form, subtle escape hatch */}
+                            {isConnected && address && (
+                                <div className="flex items-center justify-between px-1 pt-1">
+                                    <span className="font-mono text-[0.67rem] text-muted-2">
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-green mr-1.5 align-middle" />
+                                        {address.slice(0, 8)}…{address.slice(-6)}
+                                    </span>
+                                    <button
+                                        onClick={() => disconnect()}
+                                        className="font-mono text-[0.67rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
+                                    >
+                                        Wrong wallet? Disconnect
+                                    </button>
+                                </div>
+                            )}
+                            </>
                         )}
                     </>
                 )}
