@@ -1,6 +1,6 @@
 import { createConfig, http } from "wagmi";
 import { base, baseSepolia } from "wagmi/chains";
-import { injected, coinbaseWallet, walletConnect, metaMask } from "wagmi/connectors";
+import { coinbaseWallet, walletConnect, metaMask } from "wagmi/connectors";
 
 const projectId  = process.env.NEXT_PUBLIC_WC_PROJECT_ID  ?? "";
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
@@ -18,7 +18,6 @@ export const wagmiConfig = createConfig({
     connectors: [
         coinbaseWallet({ appName: APP_METADATA.name, appLogoUrl: APP_METADATA.icons[0] }),
         metaMask({ dappMetadata: { name: APP_METADATA.name, url: APP_METADATA.url, iconUrl: APP_METADATA.icons[0] } }),
-        injected(),
         ...(projectId ? [walletConnect({ projectId, metadata: APP_METADATA })] : []),
     ],
     transports: {
