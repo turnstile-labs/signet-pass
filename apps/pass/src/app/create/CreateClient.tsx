@@ -176,7 +176,6 @@ export function CreateClient() {
     // ── Deploy ────────────────────────────────────────────────────────────────
     const [name,        setName]        = useState("");
     const [cutoffDate,  setCutoffDate]  = useState("");
-    const [dateFocused, setDateFocused] = useState(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const toggleExchange = (id: string) =>
@@ -492,21 +491,15 @@ export function CreateClient() {
                             <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
 
                                 {/* Pass name */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-baseline justify-between px-0.5">
-                                        <span className="text-[0.78rem] font-medium text-text">Pass name</span>
-                                        <span className="text-[0.65rem] text-muted-2">optional</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={e => setName(e.target.value)}
-                                        placeholder="e.g. OG Holders, Presale Round 1"
-                                        className="w-full bg-bg border border-border rounded-xl px-3.5 py-3
-                                                   text-[0.95rem] text-text placeholder:text-muted-2
-                                                   outline-none focus:border-accent/50 transition-colors"
-                                    />
-                                </div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder="Pass name (optional)"
+                                    className="w-full bg-bg border border-border rounded-xl px-3.5 py-3
+                                               text-[0.95rem] text-text placeholder:text-muted-2
+                                               outline-none focus:border-accent/50 transition-colors"
+                                />
 
                                 {/* Criteria — always visible */}
                                 <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
@@ -517,15 +510,12 @@ export function CreateClient() {
                                             Account cutoff
                                         </label>
                                         <input
-                                            type={cutoffDate || dateFocused ? "date" : "text"}
+                                            type="date"
                                             value={cutoffDate}
-                                            placeholder="No cutoff"
-                                            onFocus={() => setDateFocused(true)}
-                                            onBlur={() => setDateFocused(false)}
                                             onChange={e => setCutoffDate(e.target.value)}
                                             className="w-full bg-surface border border-border rounded-xl
                                                        px-3.5 py-2.5 text-[0.82rem] text-text
-                                                       placeholder:text-muted-2 outline-none focus:border-accent/50
+                                                       outline-none focus:border-accent/50
                                                        transition-colors [color-scheme:dark]"
                                         />
                                         <p className="text-[0.68rem] text-muted-2">
