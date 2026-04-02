@@ -176,6 +176,7 @@ export function CreateClient() {
     // ── Deploy ────────────────────────────────────────────────────────────────
     const [name,        setName]        = useState("");
     const [cutoffDate,  setCutoffDate]  = useState("");
+    const [dateFocused, setDateFocused] = useState(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const toggleExchange = (id: string) =>
@@ -491,15 +492,21 @@ export function CreateClient() {
                             <div className="rounded-2xl border border-border bg-surface p-5 space-y-5">
 
                                 {/* Pass name */}
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={e => setName(e.target.value)}
-                                    placeholder="Pass name (optional)"
-                                    className="w-full bg-bg border border-border rounded-xl px-3.5 py-3
-                                               text-[0.95rem] text-text placeholder:text-muted-2
-                                               outline-none focus:border-accent/50 transition-colors"
-                                />
+                                <div className="space-y-1.5">
+                                    <div className="flex items-baseline justify-between px-0.5">
+                                        <span className="text-[0.78rem] font-medium text-text">Pass name</span>
+                                        <span className="text-[0.65rem] text-muted-2">optional</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={e => setName(e.target.value)}
+                                        placeholder="e.g. OG Holders, Presale Round 1"
+                                        className="w-full bg-bg border border-border rounded-xl px-3.5 py-3
+                                                   text-[0.95rem] text-text placeholder:text-muted-2
+                                                   outline-none focus:border-accent/50 transition-colors"
+                                    />
+                                </div>
 
                                 {/* Criteria — always visible */}
                                 <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
@@ -510,12 +517,15 @@ export function CreateClient() {
                                             Account cutoff
                                         </label>
                                         <input
-                                            type="date"
+                                            type={cutoffDate || dateFocused ? "date" : "text"}
                                             value={cutoffDate}
+                                            placeholder="No cutoff"
+                                            onFocus={() => setDateFocused(true)}
+                                            onBlur={() => setDateFocused(false)}
                                             onChange={e => setCutoffDate(e.target.value)}
                                             className="w-full bg-surface border border-border rounded-xl
                                                        px-3.5 py-2.5 text-[0.82rem] text-text
-                                                       outline-none focus:border-accent/50
+                                                       placeholder:text-muted-2 outline-none focus:border-accent/50
                                                        transition-colors [color-scheme:dark]"
                                         />
                                         <p className="text-[0.68rem] text-muted-2">
@@ -560,39 +570,29 @@ export function CreateClient() {
                                     </div>
                                 </div>
 
-                                {/* Connect wallet or deploy */}
-                                {!isConnected ? (
-                                    <ConnectKitButton.Custom>
-                                        {({ show }) => (
-                                            <button onClick={show}
-                                                className="w-full rounded-xl border border-border-h bg-surface-2
-                                                           font-medium py-3 text-[0.88rem] text-text
-                                                           hover:border-accent/50 hover:text-accent
-                                                           transition-colors cursor-pointer">
-                                                Continue →
-                                            </button>
-                                        )}
-                                    </ConnectKitButton.Custom>
-                                ) : (
-                                    <button
-                                        onClick={handleDeploy}
-                                        disabled={phase === "deploying" || !FACTORY_ADDRESS}
-                                        className="w-full rounded-xl bg-accent font-semibold py-3 text-[0.9rem]
-                                                   hover:opacity-90 transition-opacity disabled:opacity-50
-                                                   disabled:cursor-not-allowed cursor-pointer"
-                                        style={{ color: "#fff" }}
-                                    >
-                                        {phase === "deploying" ? (
-                                            <span className="flex items-center justify-center gap-2">
-                                                <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                                </svg>
-                                                Creating…
-                                            </span>
-                                        ) : "Create pass →"}
-                                    </button>
-                                )}
+                                {/* Create pass — opens wallet modal if not connected, deploys if connected */}
+                                <ConnectKitButton.Custom>
+                                    {({ show }) => (
+                                        <button
+                                            onClick={isConnected ? handleDeploy : show}
+                                            disabled={phase === "deploying" || !FACTORY_ADDRESS}
+                                            className="w-full rounded-xl bg-accent font-semibold py-3 text-[0.9rem]
+                                                       hover:opacity-90 transition-opacity disabled:opacity-50
+                                                       disabled:cursor-not-allowed cursor-pointer"
+                                            style={{ color: "#fff" }}
+                                        >
+                                            {phase === "deploying" ? (
+                                                <span className="flex items-center justify-center gap-2">
+                                                    <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                    </svg>
+                                                    Creating…
+                                                </span>
+                                            ) : "Create pass →"}
+                                        </button>
+                                    )}
+                                </ConnectKitButton.Custom>
 
                                 {phase === "error" && (
                                     <div className="rounded-xl border border-red/25 bg-red/5 px-4 py-3">
