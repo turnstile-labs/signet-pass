@@ -603,7 +603,7 @@ export function CreateClient() {
                                         <div className="space-y-2 pt-1">
                                             <div className="flex items-center justify-between">
                                                 <p className="font-mono text-[0.68rem] text-muted-2">
-                                                    {address!.slice(0, 8)}…{address!.slice(-6)}
+                                                    {address ? `${address.slice(0, 8)}…${address.slice(-6)}` : ""}
                                                 </p>
                                                 <button
                                                     onClick={() => disconnect()}

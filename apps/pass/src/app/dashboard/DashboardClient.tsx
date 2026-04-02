@@ -310,7 +310,7 @@ export function DashboardClient() {
                                                 <div className="min-w-0 flex-1 space-y-0.5">
                                                     <div className="flex items-center gap-1.5 min-w-0">
                                                         <span className="font-mono text-[0.75rem] text-text truncate">
-                                                            {e.wallet.slice(0, 10)}…{e.wallet.slice(-8)}
+                                                            {e.wallet ? `${e.wallet.slice(0, 10)}…${e.wallet.slice(-8)}` : "—"}
                                                         </span>
                                                         <CopyBtn text={e.wallet} />
                                                     </div>
@@ -330,7 +330,7 @@ export function DashboardClient() {
                                             <div className="hidden sm:grid grid-cols-[1fr_auto_auto] gap-4 items-center">
                                                 <div className="flex items-center gap-2 min-w-0">
                                                     <span className="font-mono text-[0.75rem] text-text truncate">
-                                                        {e.wallet.slice(0, 10)}…{e.wallet.slice(-8)}
+                                                        {e.wallet ? `${e.wallet.slice(0, 10)}…${e.wallet.slice(-8)}` : "—"}
                                                     </span>
                                                     <CopyBtn text={e.wallet} />
                                                 </div>
