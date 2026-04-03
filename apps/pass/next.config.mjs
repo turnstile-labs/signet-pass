@@ -1,5 +1,19 @@
+const ARTIFACTS_UPSTREAM =
+    "https://github.com/turnstile-labs/signet-pass/releases/download/artifacts-v1";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async rewrites() {
+        return [
+            {
+                // Proxy artifact requests through our domain so CORS headers apply
+                // and GitHub's redirect is followed server-side, not by the browser.
+                source:      "/artifacts/:file*",
+                destination: `${ARTIFACTS_UPSTREAM}/:file*`,
+            },
+        ];
+    },
+
     async headers() {
         return [
             {
