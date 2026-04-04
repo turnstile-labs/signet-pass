@@ -10,6 +10,16 @@ import { baseSepolia } from "wagmi/chains";
 import { SiteNav } from "@/components/SiteNav";
 import { SIGNET_PASS_ABI, isValidAddress, getPublicClient } from "@/lib/wagmi";
 
+// ── Mock badge holders feed ───────────────────────────────────────────────────
+
+const MOCK_HOLDERS = [
+    { addr: "0xa3f1…9d20", ago: "3 min ago",  id: "#42" },
+    { addr: "0x8c44…b107", ago: "7 min ago",  id: "#41" },
+    { addr: "0x1e9b…3ac5", ago: "12 min ago", id: "#40" },
+    { addr: "0x5d77…f831", ago: "18 min ago", id: "#39" },
+    { addr: "0x2b60…cc14", ago: "24 min ago", id: "#38" },
+];
+
 // ── Contracts ─────────────────────────────────────────────────────────────────
 
 const PASS_CONTRACT = (
@@ -270,6 +280,37 @@ export function BadgeGateClient() {
                                             #{mintedId}
                                         </span>
                                     )}
+                                </div>
+                            </div>
+
+                            {/* Recent mints feed */}
+                            <div>
+                                <p className="text-[0.65rem] font-mono text-muted-2 mb-2">Recent mints</p>
+                                <div className="rounded-xl border border-border bg-surface divide-y divide-border overflow-hidden">
+                                    {claimed && address && (
+                                        <div className="flex items-center justify-between px-3 py-2.5 bg-green/5">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-green flex-shrink-0" />
+                                                <span className="font-mono text-[0.75rem] text-green font-medium">
+                                                    {address.slice(0, 6)}…{address.slice(-4)}
+                                                </span>
+                                                <span className="text-[0.65rem] font-medium text-green/70">you</span>
+                                            </div>
+                                            <span className="font-mono text-[0.68rem] text-green/70">just now</span>
+                                        </div>
+                                    )}
+                                    {MOCK_HOLDERS.map(({ addr, ago, id }) => (
+                                        <div key={addr} className="flex items-center justify-between px-3 py-2.5">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-muted-2 flex-shrink-0" />
+                                                <span className="font-mono text-[0.75rem] text-muted">{addr}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono text-[0.65rem] text-accent">{id}</span>
+                                                <span className="text-[0.68rem] text-muted-2">{ago}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 

@@ -509,7 +509,7 @@ export function CreateClient() {
                                         <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
                                             Account cutoff
                                         </label>
-                                        <div className="w-full overflow-hidden">
+                                        <div className="w-full overflow-hidden rounded-xl">
                                         <input
                                             type="date"
                                             value={cutoffDate}
