@@ -199,9 +199,9 @@ export function StatsClient() {
 
     useEffect(() => { load(); }, [load]);
 
-    const feeLabel = stats?.signetFee === 0n
+    const feeLabel = !stats || stats.signetFee === 0n
         ? "Free during testnet"
-        : `${formatEther(stats!.signetFee)} ETH per verification`;
+        : `${formatEther(stats.signetFee)} ETH per verification`;
 
     return (
         <div className="min-h-screen flex flex-col">

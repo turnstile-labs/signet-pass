@@ -6,8 +6,9 @@ import { getDefaultConfig } from "connectkit";
 const projectId  = process.env.NEXT_PUBLIC_WC_PROJECT_ID  ?? "";
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
 
-export const wagmiConfig = createConfig(
-    getDefaultConfig({
+export const wagmiConfig = createConfig({
+    ssr: true,
+    ...getDefaultConfig({
         chains:   [baseSepolia, base],
         transports: {
             [baseSepolia.id]: http(
@@ -31,5 +32,5 @@ export const wagmiConfig = createConfig(
         appDescription: "Verified access passes powered by ZK email proofs.",
         appUrl:         typeof window !== "undefined" ? window.location.origin : "https://signetpass.xyz",
         appIcon:        "https://signetpass.xyz/icon.png",
-    })
-);
+    }),
+});
