@@ -40,6 +40,7 @@ function oneYearAgo(): string {
 }
 
 function dateToUnix(s: string): bigint {
+    if (!s) return 0n;
     return BigInt(Math.floor(new Date(s + "T00:00:00Z").getTime() / 1000));
 }
 
@@ -140,9 +141,8 @@ export default function DevelopersPage() {
     const { writeContractsAsync }  = useWriteContracts();
 
     const [name,        setName]        = useState("");
-    const [cutoffDate,  setCutoffDate]  = useState(oneYearAgo);
+    const [cutoffDate,  setCutoffDate]  = useState("");
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [advanced,    setAdvanced]    = useState(false);
 
     const toggleExchange = (id: string) =>
         setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -322,134 +322,83 @@ export default function DevelopersPage() {
                                 </div>
                             </div>
                         ) : (
+                            <>
                             <div className="space-y-4">
                                 {/* Pass name */}
-                                <div className="space-y-1.5">
-                                    <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                        Pass name{" "}
-                                        <span className="normal-case tracking-normal">(optional)</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={e => setName(e.target.value)}
-                                        placeholder="My Project"
-                                        className="w-full bg-bg border border-border rounded-lg px-3 py-2
-                                                   text-[0.88rem] text-text placeholder:text-muted-2
-                                                   outline-none focus:border-accent/50 transition-colors font-mono"
-                                    />
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder="Pass name (optional)"
+                                    className="w-full bg-bg border border-border rounded-lg px-3 py-2.5
+                                               text-[0.88rem] text-text placeholder:text-muted-2
+                                               outline-none focus:border-accent/50 transition-colors"
+                                />
+
+                                {/* Criteria — always visible */}
+                                <div className="rounded-xl border border-border bg-bg px-4 py-4 space-y-4 overflow-x-hidden">
+
+                                    {/* Account cutoff */}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                            Account cutoff
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={cutoffDate}
+                                            onChange={e => setCutoffDate(e.target.value)}
+                                            style={{ maxWidth: "100%" }}
+                                            className="w-full appearance-none bg-surface border border-border-h
+                                                       rounded-lg px-3 py-2.5 text-[0.82rem] text-text
+                                                       outline-none focus:border-accent/50
+                                                       transition-colors [color-scheme:dark]"
+                                        />
+                                        <p className="text-[0.68rem] text-muted-2">
+                                            {cutoffDate ? "Account must have been registered before this date." : "No date restriction."}
+                                        </p>
+                                    </div>
+
+                                    {/* Exchange filter */}
+                                    <div className="space-y-2">
+                                        <div className="flex items-baseline justify-between gap-2">
+                                            <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
+                                                Exchange
+                                            </label>
+                                            <span className="text-[0.67rem] text-muted-2">
+                                                {selectedIds.length === 0 ? "Any exchange" : `${selectedIds.length} selected`}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1.5">
+                                            {EXCHANGE_OPTIONS.map(ex => {
+                                                const on = selectedIds.includes(ex.id);
+                                                return (
+                                                    <button
+                                                        key={ex.id}
+                                                        onClick={() => toggleExchange(ex.id)}
+                                                        className={`rounded-lg border px-2 py-2.5 text-left transition-colors cursor-pointer ${
+                                                            on
+                                                                ? "border-accent/50 bg-accent/10 text-accent"
+                                                                : "border-border bg-surface hover:border-border-h text-muted"
+                                                        }`}
+                                                    >
+                                                        <p className="text-[0.72rem] font-medium leading-tight">{ex.label}</p>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                        <p className="text-[0.68rem] text-muted-2">
+                                            {selectedIds.length === 0
+                                                ? "No restriction — any supported exchange qualifies."
+                                                : `Restricted to ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} only.`}
+                                        </p>
+                                    </div>
                                 </div>
 
-                                {/* Connect wallet */}
-                                {!isConnected && (
-                                    <ConnectKitButton.Custom>
-                                        {({ show }) => (
-                                            <button onClick={show}
-                                                className="w-full rounded-lg border border-border-h bg-surface-2
-                                                           font-medium py-2.5 text-[0.88rem] text-text
-                                                           hover:border-accent/50 hover:text-accent
-                                                           transition-colors cursor-pointer">
-                                                Connect wallet
-                                            </button>
-                                        )}
-                                    </ConnectKitButton.Custom>
-                                )}
-
-                                {/* Advanced settings */}
-                                {isConnected && (
-                                    <div>
+                                {/* Create pass — opens wallet modal if not connected, deploys if connected */}
+                                <ConnectKitButton.Custom>
+                                    {({ show }) => (
                                         <button
-                                            onClick={() => setAdvanced(v => !v)}
-                                            className="flex items-center gap-1.5 text-[0.72rem] text-muted
-                                                       hover:text-text transition-colors cursor-pointer"
-                                        >
-                                            <span className={`transition-transform duration-150 ${advanced ? "rotate-90" : ""}`}>▸</span>
-                                            Advanced settings
-                                            {!advanced && (
-                                                <span className="font-mono text-[0.65rem] text-muted-2 ml-1">
-                                                    (cutoff: {cutoffDate} ·{" "}
-                                                    {selectedIds.length === 0
-                                                        ? "any exchange"
-                                                        : selectedIds.length === 1
-                                                            ? EXCHANGE_OPTIONS.find(e => e.id === selectedIds[0])?.label
-                                                            : `${selectedIds.length} exchanges`
-                                                    })
-                                                </span>
-                                            )}
-                                        </button>
-                                        {advanced && (
-                                            <div className="mt-3 rounded-xl border border-border bg-bg px-4 py-4 space-y-4">
-                                                <div className="space-y-1.5">
-                                                    <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                        Account cutoff
-                                                    </label>
-                                    <input
-                                        type="date"
-                                        value={cutoffDate}
-                                        onChange={e => setCutoffDate(e.target.value)}
-                                        style={{ maxWidth: "100%" }}
-                                        className="w-full bg-surface border border-border-h rounded-lg px-3 py-2
-                                                   text-[0.82rem] text-text outline-none focus:border-accent/50
-                                                   transition-colors font-mono [color-scheme:dark]"
-                                    />
-                                                    <p className="text-[0.68rem] text-muted-2">
-                                                        Only accounts with an email older than this date qualify.
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
-                                                        Exchange filter
-                                                        <span className="ml-2 normal-case tracking-normal text-muted-2">
-                                                            — leave empty to accept all
-                                                        </span>
-                                                    </label>
-                                                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-                                                        {EXCHANGE_OPTIONS.map(ex => {
-                                                            const on = selectedIds.includes(ex.id);
-                                                            return (
-                                                                <button
-                                                                    key={ex.id}
-                                                                    onClick={() => toggleExchange(ex.id)}
-                                                                    className={`rounded-lg border px-2 py-2 text-left transition-colors cursor-pointer
-                                                                        ${on
-                                                                            ? "border-accent/50 bg-accent/10 text-accent"
-                                                                            : "border-border bg-surface hover:border-border-h text-muted"
-                                                                        }`}
-                                                                >
-                                                                    <p className="text-[0.72rem] font-medium leading-tight">{ex.label}</p>
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                    <p className="text-[0.68rem] text-muted-2">
-                                                        {selectedIds.length === 0
-                                                            ? "No filter — any supported exchange qualifies."
-                                                            : `Only ${EXCHANGE_OPTIONS.filter(e => selectedIds.includes(e.id)).map(e => e.label).join(", ")} accounts qualify.`
-                                                        }
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {isConnected && (
-                                    <div className="space-y-2">
-                                        {address && (
-                                            <div className="flex items-center justify-between">
-                                                <p className="font-mono text-[0.68rem] text-muted-2">
-                                                    {address.slice(0, 8)}…{address.slice(-6)}
-                                                </p>
-                                                <button
-                                                    onClick={() => disconnect()}
-                                                    className="font-mono text-[0.68rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
-                                                >
-                                                    Disconnect
-                                                </button>
-                                            </div>
-                                        )}
-                                        <button
-                                            onClick={handleDeploy}
+                                            onClick={isConnected ? handleDeploy : show}
                                             disabled={phase === "deploying" || !FACTORY_ADDRESS}
                                             className="w-full rounded-lg bg-accent font-semibold py-2.5 text-[0.88rem]
                                                        hover:opacity-90 transition-opacity disabled:opacity-50
@@ -466,8 +415,8 @@ export default function DevelopersPage() {
                                                 </span>
                                             ) : "Create pass →"}
                                         </button>
-                                    </div>
-                                )}
+                                    )}
+                                </ConnectKitButton.Custom>
 
                                 {phase === "error" && (
                                     <div className="rounded-lg border border-red/25 bg-red/5 px-4 py-3">
@@ -475,6 +424,23 @@ export default function DevelopersPage() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Disconnect — outside form, subtle escape hatch */}
+                            {isConnected && address && (
+                                <div className="flex items-center justify-between px-1 pt-3">
+                                    <span className="font-mono text-[0.67rem] text-muted-2">
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-green mr-1.5 align-middle" />
+                                        {address.slice(0, 8)}…{address.slice(-6)}
+                                    </span>
+                                    <button
+                                        onClick={() => disconnect()}
+                                        className="font-mono text-[0.67rem] text-muted-2 hover:text-muted transition-colors cursor-pointer"
+                                    >
+                                        Wrong wallet? Disconnect
+                                    </button>
+                                </div>
+                            )}
+                            </>
                         )}
                     </div>
                 </div>

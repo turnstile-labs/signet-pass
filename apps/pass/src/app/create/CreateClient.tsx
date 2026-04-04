@@ -514,7 +514,7 @@ export function CreateClient() {
                                             value={cutoffDate}
                                             onChange={e => setCutoffDate(e.target.value)}
                                             style={{ maxWidth: "100%" }}
-                                            className="w-full bg-surface border border-border-h rounded-xl
+                                            className="w-full appearance-none bg-surface border border-border-h rounded-xl
                                                        px-3.5 py-2.5 text-[0.82rem] text-text
                                                        outline-none focus:border-accent/50
                                                        transition-colors [color-scheme:dark]"
