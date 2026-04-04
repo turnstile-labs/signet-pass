@@ -496,21 +496,18 @@ export default function DevelopersPage() {
                     <div className="rounded-xl border border-border bg-surface overflow-hidden">
 
                         {/* Tab bar */}
-                        <div className="flex border-b border-border overflow-x-auto">
+                        <div className="flex border-b border-border">
                             {TABS.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => setTab(t.id)}
-                                    className={`flex flex-col items-center flex-shrink-0 px-5 py-2.5 min-h-[48px] min-w-[80px] border-b-2 -mb-px transition-colors cursor-pointer ${
+                                    className={`flex-1 px-3 py-3 min-h-[44px] text-[0.82rem] font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
                                         tab === t.id
                                             ? "border-accent text-text"
                                             : "border-transparent text-muted hover:text-text"
                                     }`}
                                 >
-                                    <span className="text-[0.82rem] font-medium">{t.label}</span>
-                                    <span className={`text-[0.62rem] font-normal leading-tight ${tab === t.id ? "text-accent" : "text-muted-2"}`}>
-                                        {t.hint}
-                                    </span>
+                                    {t.label}
                                 </button>
                             ))}
                         </div>

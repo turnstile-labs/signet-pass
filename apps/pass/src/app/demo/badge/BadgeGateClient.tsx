@@ -38,52 +38,6 @@ const BADGE_ABI = [
     { inputs: [{ name: "wallet", type: "address" }], name: "tokenOf",     outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
 ] as const;
 
-// ── Badge SVG preview (mirrors on-chain design) ───────────────────────────────
-
-function BadgePreview({ tokenId, locked = false }: { tokenId?: number; locked?: boolean }) {
-    return (
-        <div className={`relative flex flex-col items-center justify-center p-8 rounded-2xl
-                         border transition-all duration-500
-                         ${locked ? "border-border/40" : "border-accent/30"}
-                         bg-gradient-to-br from-[#0d0d1a] to-[#1a1030]`}
-             style={{ minHeight: 240 }}>
-            {!locked && (
-                <div className="absolute inset-0 rounded-2xl"
-                     style={{ boxShadow: "inset 0 0 60px #6366f115" }} />
-            )}
-            <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-4
-                              relative transition-all duration-500
-                              ${locked ? "border-2 border-border/30 bg-surface/30"
-                                       : "border-2 border-accent/60 bg-accent/10"}`}>
-                {!locked && (
-                    <div className="absolute inset-0 rounded-full"
-                         style={{ boxShadow: "0 0 30px #6366f130" }} />
-                )}
-                <span className={`text-4xl transition-all duration-500 ${locked ? "opacity-20" : "opacity-100"}`}>
-                    ✓
-                </span>
-            </div>
-            <p className={`font-mono text-[0.7rem] font-bold tracking-[0.2em] uppercase mb-1
-                           ${locked ? "text-muted-2/40" : "text-[#a5b4fc]"}`}>
-                Signet
-            </p>
-            <p className={`font-mono text-[0.6rem] tracking-[0.15em] uppercase mb-3
-                           ${locked ? "text-muted-2/30" : "text-[#7c3aed]"}`}>
-                Verified Member
-            </p>
-            {tokenId && (
-                <p className="font-mono text-[0.58rem] text-[#4b4080] mt-2">
-                    # {tokenId}
-                </p>
-            )}
-            {!locked && (
-                <div className="absolute bottom-3 right-3">
-                    <span className="font-mono text-[0.55rem] text-muted-2/50">Base Sepolia · SBT</span>
-                </div>
-            )}
-        </div>
-    );
-}
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
@@ -280,21 +234,53 @@ export function BadgeGateClient() {
                         }}
                         aria-hidden={!claimed}
                     >
-                        <div className="p-6 space-y-5">
-                            <BadgePreview tokenId={claimed ? mintedId : undefined} />
+                        <div className="p-5 space-y-4">
+
+                            {/* Badge info card */}
+                            <div className="rounded-xl border border-border bg-bg p-4 space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center
+                                                    justify-center text-xl flex-shrink-0">
+                                        🏅
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[0.78rem] font-mono text-muted-2 mb-0.5">
+                                            Soulbound NFT · Base Sepolia
+                                        </p>
+                                        <p className="text-[1rem] font-semibold text-white leading-tight">
+                                            Verified Member Badge
+                                        </p>
+                                        <p className="text-[0.72rem] text-muted truncate">
+                                            One per wallet · Non-transferable · Forever on-chain
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between pt-1 border-t border-border">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green" />
+                                        <span className="text-[0.68rem] text-muted">
+                                            {totalMinted !== undefined
+                                                ? `${Number(totalMinted)} minted · Verified members only`
+                                                : "Verified members only"}
+                                        </span>
+                                    </div>
+                                    {claimed && mintedId && (
+                                        <span className="font-mono text-[0.68rem] text-accent">
+                                            #{mintedId}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
 
                             {claimed && (
                                 <>
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-5 h-5 rounded-full bg-green/15 border border-green/30
-                                                          flex items-center justify-center text-green text-[0.7rem] flex-shrink-0">✓</span>
-                                        <p className="text-[0.88rem] font-semibold text-green">Badge minted</p>
+                                    <div className="rounded-xl border border-green/20 bg-green/5 px-4 py-3">
+                                        <p className="text-[0.75rem] text-green/80 leading-relaxed">
+                                            <span className="font-semibold text-green">Badge minted.</span>
+                                            {" "}Your proof is valid on every Signet-gated project — no re-proving needed.
+                                        </p>
                                     </div>
-
-                                    <p className="text-[0.78rem] text-muted leading-relaxed">
-                                        Your soulbound badge is on-chain and tied to this wallet.
-                                        It cannot be transferred or burned.
-                                    </p>
 
                                     {/* Share */}
                                     <div className="space-y-2">
@@ -325,7 +311,6 @@ export function BadgeGateClient() {
                                         </div>
                                     </div>
 
-                                    {/* Tx + basescan link */}
                                     {txHash && (
                                         <div className="rounded-xl border border-border bg-bg px-4 py-3 flex items-center gap-3">
                                             <span className="text-[0.7rem] text-muted-2 shrink-0">Tx</span>
@@ -338,12 +323,6 @@ export function BadgeGateClient() {
                                                 ↗
                                             </a>
                                         </div>
-                                    )}
-
-                                    {totalMinted !== undefined && (
-                                        <p className="font-mono text-[0.65rem] text-muted-2">
-                                            {Number(totalMinted)} badge{Number(totalMinted) !== 1 ? "s" : ""} minted total
-                                        </p>
                                     )}
                                 </>
                             )}
@@ -449,16 +428,6 @@ export function BadgeGateClient() {
                         </div>
                     )}
                 </div>
-
-                {/* "Prove once" callout — only visible when eligible but not yet minted */}
-                {isConnected && eligible && !claimed && (
-                    <div className="rounded-xl border border-accent/20 bg-accent/5 px-4 py-3">
-                        <p className="text-[0.78rem] text-accent/80 leading-relaxed">
-                            <span className="font-semibold text-accent">Prove once, use everywhere.</span>
-                            {" "}Your attestation from the presale demo works here too — no re-proving needed.
-                        </p>
-                    </div>
-                )}
 
                 {/* How this works */}
                 <div className="rounded-xl border border-border bg-surface px-5 py-4 space-y-3">
