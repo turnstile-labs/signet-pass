@@ -31,9 +31,14 @@ function persistPasses(passes: SavedPass[]) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(passes)); } catch { /* ignore */ }
 }
 
+const _alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
 const logsClient = createPublicClient({
     chain:     baseSepolia,
-    transport: http("https://sepolia.base.org"),
+    transport: http(
+        _alchemyKey
+            ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}`
+            : "https://sepolia.base.org"
+    ),
 });
 
 const PASS_DEPLOYED_EVENT = {

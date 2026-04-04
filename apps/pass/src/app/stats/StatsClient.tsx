@@ -11,9 +11,14 @@ import { FACTORY_ADDRESS, SIGNET_PASS_FACTORY_ABI } from "@/lib/wagmi";
 const DEPLOY_BLOCK = 39_000_000n;
 const CHUNK        = 9_000n;
 
+const _alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
 const client = createPublicClient({
     chain:     baseSepolia,
-    transport: http("https://sepolia.base.org"),
+    transport: http(
+        _alchemyKey
+            ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}`
+            : "https://sepolia.base.org"
+    ),
 });
 
 // ── Event ABIs ────────────────────────────────────────────────────────────────

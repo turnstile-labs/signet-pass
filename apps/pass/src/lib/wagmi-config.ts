@@ -23,7 +23,7 @@ export const wagmiConfig = createConfig(
         walletConnectProjectId: projectId,
         appName:        "Signet Pass",
         appDescription: "Verified access passes powered by ZK email proofs.",
-        appUrl:         "https://signetpass.xyz",
+        appUrl:         typeof window !== "undefined" ? window.location.origin : "https://signetpass.xyz",
         appIcon:        "https://signetpass.xyz/icon.png",
     })
 );
