@@ -1,4 +1,5 @@
 import { createConfig, http } from "wagmi";
+import { coinbaseWallet, metaMask, walletConnect } from "wagmi/connectors";
 import { base, baseSepolia } from "wagmi/chains";
 import { getDefaultConfig } from "connectkit";
 
@@ -20,6 +21,11 @@ export const wagmiConfig = createConfig(
                     : "https://mainnet.base.org"
             ),
         },
+        connectors: [
+            coinbaseWallet({ appName: "Signet Pass", preference: "smartWalletOnly" }),
+            metaMask(),
+            walletConnect({ projectId }),
+        ],
         walletConnectProjectId: projectId,
         appName:        "Signet Pass",
         appDescription: "Verified access passes powered by ZK email proofs.",
