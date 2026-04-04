@@ -509,17 +509,16 @@ export function CreateClient() {
                                         <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
                                             Account cutoff
                                         </label>
-                                        <div className="w-full overflow-hidden rounded-xl">
                                         <input
                                             type="date"
                                             value={cutoffDate}
                                             onChange={e => setCutoffDate(e.target.value)}
+                                            style={{ maxWidth: "100%" }}
                                             className="w-full bg-surface border border-border rounded-xl
                                                        px-3.5 py-2.5 text-[0.82rem] text-text
                                                        outline-none focus:border-accent/50
                                                        transition-colors [color-scheme:dark]"
                                         />
-                                        </div>
                                         <p className="text-[0.68rem] text-muted-2">
                                             {cutoffDate ? "Account must have been registered before this date." : "No date restriction."}
                                         </p>
