@@ -387,7 +387,8 @@ export default function DevelopersPage() {
                                         type="date"
                                         value={cutoffDate}
                                         onChange={e => setCutoffDate(e.target.value)}
-                                        className="w-full min-w-0 max-w-full bg-surface border border-border rounded-lg px-3 py-2
+                                        style={{ maxWidth: "100%" }}
+                                        className="w-full bg-surface border border-border-h rounded-lg px-3 py-2
                                                    text-[0.82rem] text-text outline-none focus:border-accent/50
                                                    transition-colors font-mono [color-scheme:dark]"
                                     />
