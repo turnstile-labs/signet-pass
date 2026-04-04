@@ -1,100 +1,160 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SiteNav } from "@/components/SiteNav";
+
+function GateLinkInput() {
+    const router = useRouter();
+    const [value, setValue] = useState("");
+    const [error, setError] = useState("");
+
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setError("");
+        const raw = value.trim();
+        if (!raw) return;
+
+        try {
+            // Accept full URLs or bare query strings like ?contract=0x...
+            const full = raw.startsWith("http") ? raw : `https://dummy.com/${raw.startsWith("?") ? raw : `?${raw}`}`;
+            const url  = new URL(full);
+            const contract = url.searchParams.get("contract") ?? "";
+            const name     = url.searchParams.get("name")     ?? "";
+            if (contract.startsWith("0x")) {
+                router.push(`/verify?contract=${contract}${name ? `&name=${encodeURIComponent(name)}` : ""}`);
+                return;
+            }
+        } catch { /* fall through */ }
+
+        setError("Couldn't find a gate contract in that link. Try copying the full URL you received.");
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-2">
+            <div className="flex gap-2">
+                <input
+                    type="text"
+                    value={value}
+                    onChange={e => { setValue(e.target.value); setError(""); }}
+                    placeholder="Paste your gate link here"
+                    className="flex-1 min-w-0 h-[44px] bg-surface border border-border-h rounded-xl
+                               px-3.5 text-[0.82rem] text-text placeholder:text-muted-2
+                               outline-none focus:border-accent/50 transition-colors"
+                />
+                <button
+                    type="submit"
+                    className="h-[44px] px-4 rounded-xl bg-surface border border-border-h
+                               text-[0.82rem] font-medium text-muted hover:text-text
+                               hover:border-text/30 transition-colors flex-shrink-0"
+                >
+                    Go →
+                </button>
+            </div>
+            {error && (
+                <p className="text-[0.72rem] text-red leading-snug">{error}</p>
+            )}
+        </form>
+    );
+}
 
 export default function HomePage() {
     return (
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full px-5 py-10 sm:py-16">
+            <main className="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full px-5 py-10 sm:py-16 space-y-10">
 
-                {/* ── Hero ─────────────────────────────────────────────────── */}
-                <h1 className="text-[2.2rem] sm:text-[3rem] font-bold tracking-tight text-white
-                                leading-[1.06] mb-5">
-                    You can fake<br />a retina scan.<br />
-                    <span className="text-accent">Not a 5-year receipt.</span>
-                </h1>
-
-                <p className="text-[0.95rem] text-muted leading-relaxed mb-8 max-w-lg">
-                    Signet Pass lets anyone gate access using verified exchange account history —
-                    privately, in the browser, in ~30 seconds.
-                    No KYC. No bots. No code required to get started.
-                </p>
-
-                {/* ── CTAs ──────────────────────────────────────────────────── */}
-                <div className="flex flex-col sm:flex-row gap-3 mb-12">
-                    <Link
-                        href="/create?tab=create"
-                        className="bg-accent font-semibold px-6 py-3 rounded-xl text-[0.9rem]
-                                   hover:opacity-90 transition-opacity text-center"
-                        style={{ color: "#fff" }}
-                    >
-                        Create a pass →
-                    </Link>
-                    <Link
-                        href="/demo"
-                        className="border border-border px-6 py-3 rounded-xl text-[0.9rem]
-                                   text-muted hover:text-text hover:border-text/30
-                                   transition-colors text-center"
-                    >
-                        See demos
-                    </Link>
+                {/* ── Hero ──────────────────────────────────────────────────── */}
+                <div className="space-y-4">
+                    <h1 className="text-[2.2rem] sm:text-[3rem] font-bold tracking-tight text-white leading-[1.06]">
+                        You can fake<br />a retina scan.<br />
+                        <span className="text-accent">Not a 5-year receipt.</span>
+                    </h1>
+                    <p className="text-[0.95rem] text-muted leading-relaxed max-w-md">
+                        Signet Pass gates access using verified exchange account history —
+                        privately, in the browser, in ~30 seconds. No KYC. No bots.
+                    </p>
                 </div>
 
-                {/* ── Who it's for ──────────────────────────────────────────── */}
-                <div className="grid sm:grid-cols-2 gap-3">
+                {/* ── Three paths ───────────────────────────────────────────── */}
+                <div className="space-y-3">
 
-                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
-                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
-                            Founders &amp; community managers
-                        </p>
-                        <p className="text-[0.88rem] font-semibold text-text">
-                            Deploy a pass, share a link.
-                        </p>
-                        <p className="text-[0.76rem] text-muted leading-relaxed">
-                            Set a cutoff date, get a shareable URL. Watch your verified
-                            allowlist fill up in real time — export to CSV anytime.
+                    {/* Gate Creator */}
+                    <div className="rounded-2xl border border-border bg-surface px-5 py-5 space-y-3">
+                        <div className="space-y-0.5">
+                            <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2">
+                                Founders &amp; community managers
+                            </p>
+                            <p className="text-[1rem] font-semibold text-text">
+                                Create a gate
+                            </p>
+                            <p className="text-[0.78rem] text-muted leading-relaxed">
+                                Deploy a verified access link in minutes. Set criteria, share the URL,
+                                watch your allowlist fill up in real time.
+                            </p>
+                        </div>
+                        <Link
+                            href="/create?tab=create"
+                            className="inline-flex items-center gap-1.5 bg-accent text-[0.82rem]
+                                       font-semibold px-4 py-2 rounded-xl hover:opacity-90
+                                       transition-opacity"
+                            style={{ color: "#fff" }}
+                        >
+                            Get started →
+                        </Link>
+                    </div>
+
+                    {/* User */}
+                    <div className="rounded-2xl border border-border bg-surface px-5 py-5 space-y-3">
+                        <div className="space-y-0.5">
+                            <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2">
+                                I have a gate link
+                            </p>
+                            <p className="text-[1rem] font-semibold text-text">
+                                Verify your access
+                            </p>
+                            <p className="text-[0.78rem] text-muted leading-relaxed">
+                                Paste the link you received to prove eligibility and unlock access.
+                                Nothing leaves your device.
+                            </p>
+                        </div>
+                        <GateLinkInput />
+                        <p className="text-[0.7rem] text-muted-2">
+                            No link yet?{" "}
+                            <Link href="/demo" className="text-accent hover:underline">
+                                Try a live demo →
+                            </Link>
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
-                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
-                            Developers &amp; integrators
-                        </p>
-                        <p className="text-[0.88rem] font-semibold text-text">
-                            One read call. Done.
-                        </p>
-                        <p className="text-[0.76rem] text-muted leading-relaxed">
-                            <code className="font-mono text-[0.72rem] text-text/80">isVerified(address) → bool</code>.
-                            Gate any component, API route, or backend —
-                            no server, no OAuth, no infrastructure.
-                        </p>
-                    </div>
-
-                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
-                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
-                            For users
-                        </p>
-                        <p className="text-[0.88rem] font-semibold text-text">
-                            Nothing leaves your device.
-                        </p>
-                        <p className="text-[0.76rem] text-muted leading-relaxed">
-                            The ZK proof runs entirely in the browser. No email content,
-                            no inbox access, no data ever leaves your device.
-                        </p>
-                    </div>
-
-                    <div className="rounded-xl border border-border bg-surface px-4 py-4 space-y-1.5">
-                        <p className="text-[0.72rem] font-mono uppercase tracking-widest text-muted-2">
-                            Prove once. Valid everywhere.
-                        </p>
-                        <p className="text-[0.88rem] font-semibold text-text">
-                            One attestation, reused forever.
-                        </p>
-                        <p className="text-[0.76rem] text-muted leading-relaxed">
-                            A verified pass is stored on-chain. Any Signet-integrated
-                            project reads the same record — no re-proving, ever.
-                        </p>
+                    {/* Developer */}
+                    <div className="rounded-2xl border border-border bg-surface px-5 py-5 space-y-3">
+                        <div className="space-y-0.5">
+                            <p className="text-[0.65rem] font-mono uppercase tracking-widest text-muted-2">
+                                Developers &amp; integrators
+                            </p>
+                            <p className="text-[1rem] font-semibold text-text">
+                                Build with Signet
+                            </p>
+                            <p className="text-[0.78rem] text-muted leading-relaxed">
+                                One read call:{" "}
+                                <code className="font-mono text-[0.72rem] text-text/80 bg-surface-2 px-1 rounded">
+                                    isVerified(address) → bool
+                                </code>
+                                . Contracts, ABIs, and integration examples.
+                            </p>
+                        </div>
+                        <Link
+                            href="/developers"
+                            className="inline-flex items-center gap-1.5 border border-border
+                                       text-[0.82rem] font-medium px-4 py-2 rounded-xl
+                                       text-muted hover:text-text hover:border-text/30
+                                       transition-colors"
+                        >
+                            View docs →
+                        </Link>
                     </div>
 
                 </div>
