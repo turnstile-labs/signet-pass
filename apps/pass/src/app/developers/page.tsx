@@ -343,16 +343,30 @@ export default function DevelopersPage() {
                                         <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
                                             Account cutoff
                                         </label>
-                                        <input
-                                            type="date"
-                                            value={cutoffDate}
-                                            onChange={e => setCutoffDate(e.target.value)}
-                                            style={{ maxWidth: "100%" }}
-                                            className="w-full appearance-none bg-surface border border-border-h
-                                                       rounded-lg px-3 py-2.5 text-[0.82rem] text-text
-                                                       outline-none focus:border-accent/50
-                                                       transition-colors [color-scheme:dark]"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={cutoffDate}
+                                                onChange={e => setCutoffDate(e.target.value)}
+                                                style={{ maxWidth: "100%" }}
+                                                className="w-full appearance-none bg-surface border border-border-h
+                                                           rounded-lg px-3 py-3 text-[0.82rem] text-text
+                                                           outline-none focus:border-accent/50
+                                                           transition-colors [color-scheme:dark]"
+                                            />
+                                            {cutoffDate && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCutoffDate("")}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2
+                                                               text-muted-2 hover:text-muted transition-colors
+                                                               text-[0.8rem] leading-none cursor-pointer px-1"
+                                                    aria-label="Clear date"
+                                                >
+                                                    ✕
+                                                </button>
+                                            )}
+                                        </div>
                                         <p className="text-[0.68rem] text-muted-2">
                                             {cutoffDate ? "Account must have been registered before this date." : "No date restriction."}
                                         </p>
