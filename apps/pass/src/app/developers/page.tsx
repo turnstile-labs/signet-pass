@@ -383,14 +383,14 @@ export default function DevelopersPage() {
                                                     <label className="text-[0.7rem] font-mono uppercase tracking-widest text-muted-2">
                                                         Account cutoff
                                                     </label>
-                                                    <input
-                                                        type="date"
-                                                        value={cutoffDate}
-                                                        onChange={e => setCutoffDate(e.target.value)}
-                                                        className="w-full bg-surface border border-border rounded-lg px-3 py-2
-                                                                   text-[0.82rem] text-text outline-none focus:border-accent/50
-                                                                   transition-colors font-mono [color-scheme:dark]"
-                                                    />
+                                    <input
+                                        type="date"
+                                        value={cutoffDate}
+                                        onChange={e => setCutoffDate(e.target.value)}
+                                        className="w-full min-w-0 max-w-full bg-surface border border-border rounded-lg px-3 py-2
+                                                   text-[0.82rem] text-text outline-none focus:border-accent/50
+                                                   transition-colors font-mono [color-scheme:dark]"
+                                    />
                                                     <p className="text-[0.68rem] text-muted-2">
                                                         Only accounts with an email older than this date qualify.
                                                     </p>
@@ -496,19 +496,19 @@ export default function DevelopersPage() {
                     <div className="rounded-xl border border-border bg-surface overflow-hidden">
 
                         {/* Tab bar */}
-                        <div className="flex border-b border-border px-2 pt-1 overflow-x-auto">
+                        <div className="flex border-b border-border overflow-x-auto">
                             {TABS.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => setTab(t.id)}
-                                    className={`flex-shrink-0 px-4 py-3 min-h-[44px] text-[0.8rem] font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+                                    className={`flex flex-col items-center flex-shrink-0 px-5 py-2.5 min-h-[48px] min-w-[80px] border-b-2 -mb-px transition-colors cursor-pointer ${
                                         tab === t.id
                                             ? "border-accent text-text"
                                             : "border-transparent text-muted hover:text-text"
                                     }`}
                                 >
-                                    {t.label}
-                                    <span className={`text-[0.64rem] font-normal mt-0.5 ${tab === t.id ? "text-accent" : "text-muted-2"}`}>
+                                    <span className="text-[0.82rem] font-medium">{t.label}</span>
+                                    <span className={`text-[0.62rem] font-normal leading-tight ${tab === t.id ? "text-accent" : "text-muted-2"}`}>
                                         {t.hint}
                                     </span>
                                 </button>
