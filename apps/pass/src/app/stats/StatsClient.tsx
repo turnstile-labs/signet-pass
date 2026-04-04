@@ -8,9 +8,8 @@ import { FACTORY_ADDRESS, SIGNET_PASS_FACTORY_ABI } from "@/lib/wagmi";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const ATTESTATION_CACHE = "0x7e80601CbEdA2302e3eB11a05bC621e5453d8fC1" as const;
-const DEPLOY_BLOCK      = 39_000_000n;
-const CHUNK             = 9_000n;
+const DEPLOY_BLOCK = 39_000_000n;
+const CHUNK        = 9_000n;
 
 const client = createPublicClient({
     chain:     baseSepolia,
@@ -63,8 +62,12 @@ async function chunkedLogs<E extends AbiEvent>(
     return (await Promise.all(tasks)).flat();
 }
 
-function shorten(addr: string) {
-    return `${addr.slice(0, 10)}…${addr.slice(-8)}`;
+function fmt(addr: string) {
+    return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function basescan(addr: string) {
+    return `https://sepolia.basescan.org/address/${addr}`;
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -81,21 +84,56 @@ interface Stats {
     fetchedAt:         Date;
 }
 
-// ── Stat cell ─────────────────────────────────────────────────────────────────
+// ── Skeleton cell ─────────────────────────────────────────────────────────────
 
-function Cell({ label, value, sub, href }: { label: string; value: string; sub?: string; href?: string }) {
+function Skeleton() {
     return (
-        <div className="rounded-xl border border-border bg-surface px-5 py-4 space-y-1">
-            <p className="font-mono text-[0.58rem] uppercase tracking-widest text-muted-2">{label}</p>
-            {href ? (
-                <a href={href} target="_blank" rel="noopener noreferrer"
-                   className="block font-mono text-[1.05rem] font-bold text-white hover:text-accent transition-colors break-all leading-snug">
-                    {value}
-                </a>
-            ) : (
-                <p className="font-mono text-[1.05rem] font-bold text-white break-all leading-snug">{value}</p>
-            )}
-            {sub && <p className="font-mono text-[0.62rem] text-muted-2">{sub}</p>}
+        <div className="rounded-2xl border border-border bg-surface px-5 py-5 animate-pulse space-y-2">
+            <div className="h-2 bg-border rounded w-16" />
+            <div className="h-8 bg-border rounded w-12" />
+            <div className="h-2 bg-border rounded w-24" />
+        </div>
+    );
+}
+
+// ── Metric card ───────────────────────────────────────────────────────────────
+
+function Metric({ label, value, note, accent = false }: {
+    label:   string;
+    value:   string;
+    note?:   string;
+    accent?: boolean;
+}) {
+    return (
+        <div className={`rounded-2xl border bg-surface px-5 py-5 space-y-1 ${
+            accent ? "border-green/25 bg-green/5" : "border-border"
+        }`}>
+            <p className="text-[0.68rem] text-muted">{label}</p>
+            <p className={`text-[2rem] font-bold tracking-tight leading-none ${
+                accent ? "text-green" : "text-text"
+            }`}>{value}</p>
+            {note && <p className="text-[0.65rem] text-muted-2 pt-0.5">{note}</p>}
+        </div>
+    );
+}
+
+// ── Contract row ──────────────────────────────────────────────────────────────
+
+function ContractRow({ label, addr, note }: { label: string; addr: string; note?: string }) {
+    return (
+        <div className="flex items-center justify-between gap-4 py-3 border-b border-border last:border-0">
+            <div className="min-w-0">
+                <p className="text-[0.78rem] font-medium text-text">{label}</p>
+                {note && <p className="text-[0.68rem] text-muted-2 mt-0.5">{note}</p>}
+            </div>
+            <a
+                href={basescan(addr)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[0.72rem] text-muted-2 hover:text-accent transition-colors flex-shrink-0"
+            >
+                {fmt(addr)} ↗
+            </a>
         </div>
     );
 }
@@ -103,16 +141,15 @@ function Cell({ label, value, sub, href }: { label: string; value: string; sub?:
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function StatsClient() {
-    const [stats,    setStats]   = useState<Stats | null>(null);
-    const [loading,  setLoading] = useState(true);
-    const [error,    setError]   = useState("");
+    const [stats,   setStats]   = useState<Stats | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error,   setError]   = useState("");
 
     const load = useCallback(async () => {
         setLoading(true);
         setError("");
         try {
             const latest = await client.getBlockNumber();
-            const from   = latest > 500_000n ? latest - 500_000n : 0n;
 
             const [signetFee, treasury, factoryOwner] = await Promise.all([
                 client.readContract({ address: FACTORY_ADDRESS, abi: SIGNET_PASS_FACTORY_ABI, functionName: "signetFee"      }) as Promise<bigint>,
@@ -121,17 +158,17 @@ export function StatsClient() {
             ]);
 
             const treasuryBalWei = await client.getBalance({ address: treasury as `0x${string}` });
-
-            const deployedLogs  = await chunkedLogs(PASS_DEPLOYED_EVENT, FACTORY_ADDRESS, DEPLOY_BLOCK, latest);
-            const passAddresses = deployedLogs.map(l => l.args.pass as `0x${string}`);
+            const deployedLogs   = await chunkedLogs(PASS_DEPLOYED_EVENT, FACTORY_ADDRESS, DEPLOY_BLOCK, latest);
+            const passAddresses  = deployedLogs.map(l => l.args.pass as `0x${string}`);
 
             let verificationCount = 0;
             let feeCollectedWei   = 0n;
 
             if (passAddresses.length > 0) {
+                const recentFrom = latest > 500_000n ? latest - 500_000n : 0n;
                 const [verifiedLogs, feeLogs] = await Promise.all([
-                    chunkedLogs(VERIFIED_EVENT,       passAddresses, from,         latest),
-                    chunkedLogs(FEE_COLLECTED_EVENT,  passAddresses, DEPLOY_BLOCK, latest),
+                    chunkedLogs(VERIFIED_EVENT,      passAddresses, recentFrom,   latest),
+                    chunkedLogs(FEE_COLLECTED_EVENT, passAddresses, DEPLOY_BLOCK, latest),
                 ]);
                 verificationCount = verifiedLogs.length;
                 feeCollectedWei   = feeLogs.reduce((s, l) => s + (l.args.amount ?? 0n), 0n);
@@ -157,40 +194,45 @@ export function StatsClient() {
 
     useEffect(() => { load(); }, [load]);
 
-    const basescan = (addr: string) => `https://sepolia.basescan.org/address/${addr}`;
+    const feeLabel = stats?.signetFee === 0n
+        ? "Free during testnet"
+        : `${formatEther(stats!.signetFee)} ETH per verification`;
 
     return (
         <div className="min-h-screen flex flex-col">
             <SiteNav />
 
-            <main className="flex-1 max-w-3xl mx-auto w-full px-5 py-10 space-y-6">
+            <main className="flex-1 max-w-2xl mx-auto w-full px-5 py-10 space-y-8">
 
-                {/* Header bar */}
+                {/* Header */}
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="font-mono text-[0.58rem] uppercase tracking-wider
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <span className="font-mono text-[0.6rem] uppercase tracking-wider
                                              bg-amber/10 text-amber border border-amber/25
                                              px-2 py-0.5 rounded-full">
-                                internal
+                                Signet internal
                             </span>
-                            <span className="font-mono text-[0.62rem] text-muted-2">Base Sepolia · testnet</span>
+                            <span className="font-mono text-[0.62rem] text-muted-2">Base Sepolia</span>
                         </div>
-                        <h1 className="text-[1.4rem] font-bold tracking-tight text-white">
-                            Protocol dashboard
+                        <h1 className="text-[1.6rem] font-bold tracking-tight text-white leading-tight">
+                            Protocol stats
                         </h1>
                     </div>
-                    <div className="flex items-center gap-3">
-                        {stats && (
-                            <span className="font-mono text-[0.62rem] text-muted-2">
-                                block {stats.blockNumber.toLocaleString()} · {stats.fetchedAt.toLocaleTimeString()}
+                    <div className="flex items-center gap-3 pt-1">
+                        {stats && !loading && (
+                            <span className="font-mono text-[0.6rem] text-muted-2">
+                                {stats.fetchedAt.toLocaleTimeString()}
                             </span>
                         )}
-                        <button onClick={load} disabled={loading}
-                            className="font-mono text-[0.68rem] border border-border px-3 py-1.5 rounded-lg
-                                       text-muted hover:text-text hover:border-border/60 transition-colors
-                                       disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed">
-                            {loading ? "loading…" : "↻ refresh"}
+                        <button
+                            onClick={load}
+                            disabled={loading}
+                            className="font-mono text-[0.72rem] border border-border px-3 py-1.5 rounded-lg
+                                       text-muted hover:text-text hover:border-border-h transition-colors
+                                       disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                        >
+                            {loading ? "Loading…" : "↻ Refresh"}
                         </button>
                     </div>
                 </div>
@@ -201,108 +243,88 @@ export function StatsClient() {
                     </p>
                 )}
 
-                {/* ── Activity metrics ─────────────────────────────────── */}
-                <section className="space-y-2">
-                    <p className="font-mono text-[0.6rem] uppercase tracking-widest text-muted-2 px-1">Activity</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {/* Metrics */}
+                <section className="space-y-3">
+                    <p className="text-[0.68rem] font-mono uppercase tracking-widest text-muted-2">
+                        Usage
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
                         {loading ? (
-                            [0,1,2].map(i => (
-                                <div key={i} className="rounded-xl border border-border bg-surface px-5 py-4 animate-pulse space-y-2">
-                                    <div className="h-2 bg-border rounded w-16" />
-                                    <div className="h-6 bg-border rounded w-12" />
-                                </div>
-                            ))
+                            [0, 1, 2].map(i => <Skeleton key={i} />)
                         ) : stats ? (
                             <>
-                                <Cell
+                                <Metric
                                     label="Passes deployed"
                                     value={stats.passCount.toLocaleString()}
-                                    sub="all-time · factory events"
+                                    note="All-time"
                                 />
-                                <Cell
+                                <Metric
                                     label="Verifications"
                                     value={stats.verificationCount.toLocaleString()}
-                                    sub="last ~11 days · Verified events"
+                                    note="Last ~3 days"
                                 />
-                                <Cell
-                                    label="Fees collected"
-                                    value={`${parseFloat(formatEther(stats.feeCollectedWei)).toFixed(6)} ETH`}
-                                    sub="all-time · FeeCollected events"
+                                <Metric
+                                    label="Revenue"
+                                    value={stats.feeCollectedWei === 0n
+                                        ? "—"
+                                        : `${parseFloat(formatEther(stats.feeCollectedWei)).toFixed(4)} ETH`}
+                                    note={stats.feeCollectedWei === 0n ? "No fees collected yet" : "All-time · fees only"}
+                                    accent={stats.feeCollectedWei > 0n}
                                 />
-                            </>
-                        ) : null}
-                    </div>
-                </section>
-
-                {/* ── Protocol config ──────────────────────────────────── */}
-                <section className="space-y-2">
-                    <p className="font-mono text-[0.6rem] uppercase tracking-widest text-muted-2 px-1">Protocol config</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {loading ? (
-                            [0,1].map(i => (
-                                <div key={i} className="rounded-xl border border-border bg-surface px-5 py-4 animate-pulse space-y-2">
-                                    <div className="h-2 bg-border rounded w-20" />
-                                    <div className="h-4 bg-border rounded w-32" />
-                                </div>
-                            ))
-                        ) : stats ? (
-                            <>
-                                <Cell
-                                    label="signetFee (current)"
-                                    value={stats.signetFee === 0n ? "0 ETH (free)" : `${formatEther(stats.signetFee)} ETH`}
-                                    sub="charged on verify() · applies to new passes"
-                                />
-                                <Cell
+                                <Metric
                                     label="Treasury balance"
-                                    value={`${parseFloat(formatEther(stats.treasuryBalWei)).toFixed(6)} ETH`}
-                                    sub={shorten(stats.treasury)}
-                                    href={basescan(stats.treasury)}
+                                    value={`${parseFloat(formatEther(stats.treasuryBalWei)).toFixed(4)} ETH`}
+                                    note="Current wallet balance"
                                 />
                             </>
                         ) : null}
                     </div>
                 </section>
 
-                {/* ── Contracts ────────────────────────────────────────── */}
-                <section className="space-y-2">
-                    <p className="font-mono text-[0.6rem] uppercase tracking-widest text-muted-2 px-1">Contracts</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {loading ? (
-                            [0,1,2].map(i => (
-                                <div key={i} className="rounded-xl border border-border bg-surface px-5 py-4 animate-pulse space-y-2">
-                                    <div className="h-2 bg-border rounded w-24" />
-                                    <div className="h-4 bg-border rounded w-40" />
-                                </div>
-                            ))
-                        ) : stats ? (
-                            <>
-                                <Cell
-                                    label="SignetPassFactory"
-                                    value={shorten(FACTORY_ADDRESS)}
-                                    sub={`owner: ${shorten(stats.factoryOwner)}`}
-                                    href={basescan(FACTORY_ADDRESS)}
-                                />
-                                <Cell
-                                    label="AttestationCache"
-                                    value={shorten(ATTESTATION_CACHE)}
-                                    href={basescan(ATTESTATION_CACHE)}
-                                />
-                                <Cell
-                                    label="Treasury"
-                                    value={shorten(stats.treasury)}
-                                    sub="receives all verify() fees"
-                                    href={basescan(stats.treasury)}
-                                />
-                                <Cell
-                                    label="Factory owner"
-                                    value={shorten(stats.factoryOwner)}
-                                    sub="can call setFee() + transferOwnership()"
-                                    href={basescan(stats.factoryOwner)}
-                                />
-                            </>
-                        ) : null}
-                    </div>
-                </section>
+                {/* Fee rate */}
+                {!loading && stats && (
+                    <section className="rounded-2xl border border-border bg-surface px-5 py-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-[0.78rem] font-medium text-text">Current fee rate</p>
+                                <p className="text-[0.68rem] text-muted-2 mt-0.5">{feeLabel}</p>
+                            </div>
+                            <span className={`font-mono text-[0.72rem] px-2.5 py-1 rounded-full border ${
+                                stats.signetFee === 0n
+                                    ? "text-muted-2 border-border bg-surface-2"
+                                    : "text-green border-green/25 bg-green/5"
+                            }`}>
+                                {stats.signetFee === 0n ? "0 ETH" : `${formatEther(stats.signetFee)} ETH`}
+                            </span>
+                        </div>
+                    </section>
+                )}
+
+                {/* Contracts */}
+                {!loading && stats && (
+                    <section className="space-y-2">
+                        <p className="text-[0.68rem] font-mono uppercase tracking-widest text-muted-2">
+                            Contracts
+                        </p>
+                        <div className="rounded-2xl border border-border bg-surface px-5">
+                            <ContractRow
+                                label="Factory"
+                                addr={FACTORY_ADDRESS}
+                                note="Deploys new passes"
+                            />
+                            <ContractRow
+                                label="Treasury"
+                                addr={stats.treasury}
+                                note="Receives verify() fees"
+                            />
+                            <ContractRow
+                                label="Owner"
+                                addr={stats.factoryOwner}
+                                note="Can update fee rate"
+                            />
+                        </div>
+                    </section>
+                )}
 
             </main>
         </div>
