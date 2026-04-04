@@ -1,92 +1,23 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { createPublicClient, http, type AbiEvent, formatEther } from "viem";
-import { baseSepolia } from "viem/chains";
 import { SiteNav } from "@/components/SiteNav";
-import { FACTORY_ADDRESS, SIGNET_PASS_FACTORY_ABI } from "@/lib/wagmi";
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const DEPLOY_BLOCK = 39_000_000n;
-const CHUNK        = 9_000n;
-
-const _alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
-const client = createPublicClient({
-    chain:     baseSepolia,
-    transport: http(
-        _alchemyKey
-            ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}`
-            : "https://sepolia.base.org"
-    ),
-});
-
-// ── Event ABIs ────────────────────────────────────────────────────────────────
-
-const PASS_DEPLOYED_EVENT = {
-    type: "event", name: "PassDeployed",
-    inputs: [
-        { name: "pass",          type: "address",   indexed: true  },
-        { name: "owner",         type: "address",   indexed: true  },
-        { name: "cutoff",        type: "uint256",   indexed: false },
-        { name: "allowedHashes", type: "uint256[]", indexed: false },
-        { name: "feePerCheck",   type: "uint256",   indexed: false },
-    ],
-} as const satisfies AbiEvent;
-
-const VERIFIED_EVENT = {
-    type: "event", name: "Verified",
-    inputs: [{ name: "wallet", type: "address", indexed: true }],
-} as const satisfies AbiEvent;
-
-const FEE_COLLECTED_EVENT = {
-    type: "event", name: "FeeCollected",
-    inputs: [
-        { name: "pass",   type: "address", indexed: true  },
-        { name: "wallet", type: "address", indexed: true  },
-        { name: "amount", type: "uint256", indexed: false },
-    ],
-} as const satisfies AbiEvent;
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-async function chunkedLogs<E extends AbiEvent>(
-    event:     E,
-    address:   `0x${string}` | `0x${string}`[] | undefined,
-    fromBlock: bigint,
-    toBlock:   bigint,
-) {
-    const tasks: ReturnType<typeof client.getLogs<E>>[] = [];
-    for (let from = fromBlock; from <= toBlock; from += CHUNK) {
-        const to = from + CHUNK - 1n < toBlock ? from + CHUNK - 1n : toBlock;
-        tasks.push(
-            client.getLogs<E>({ event, address, fromBlock: from, toBlock: to })
-                  .catch(() => [] as Awaited<ReturnType<typeof client.getLogs<E>>>)
-        );
-    }
-    return (await Promise.all(tasks)).flat();
-}
-
-function fmt(addr: string) {
-    return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
-
-function basescan(addr: string) {
-    return `https://sepolia.basescan.org/address/${addr}`;
-}
+import { FACTORY_ADDRESS } from "@/lib/wagmi";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Stats {
-    blockNumber:       bigint;
+    blockNumber:       string;
     passCount:         number;
     verificationCount: number;
-    feeCollectedWei:   bigint;
-    signetFee:         bigint;
+    feeCollectedEth:   string;
+    signetFee:         string;
+    signetFeeEth:      string;
     treasury:          string;
-    treasuryBalWei:    bigint;
+    treasuryBalEth:    string;
     factoryOwner:      string;
-    fetchedAt:         Date;
+    fetchedAt:         string;
+    factoryAddress:    string;
 }
 
 // ── Skeleton cell ─────────────────────────────────────────────────────────────
@@ -124,6 +55,14 @@ function Metric({ label, value, note, accent = false }: {
 
 // ── Contract row ──────────────────────────────────────────────────────────────
 
+function fmt(addr: string) {
+    return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function basescan(addr: string) {
+    return `https://sepolia.basescan.org/address/${addr}`;
+}
+
 function ContractRow({ label, addr, note }: { label: string; addr: string; note?: string }) {
     return (
         <div className="flex items-center justify-between gap-4 py-3 border-b border-border last:border-0">
@@ -154,44 +93,15 @@ export function StatsClient() {
         setLoading(true);
         setError("");
         try {
-            const latest = await client.getBlockNumber();
-
-            const [signetFee, treasury, factoryOwner] = await Promise.all([
-                client.readContract({ address: FACTORY_ADDRESS, abi: SIGNET_PASS_FACTORY_ABI, functionName: "signetFee"      }) as Promise<bigint>,
-                client.readContract({ address: FACTORY_ADDRESS, abi: SIGNET_PASS_FACTORY_ABI, functionName: "signetTreasury" }) as Promise<string>,
-                client.readContract({ address: FACTORY_ADDRESS, abi: SIGNET_PASS_FACTORY_ABI, functionName: "owner"          }) as Promise<string>,
-            ]);
-
-            const treasuryBalWei = await client.getBalance({ address: treasury as `0x${string}` });
-            const deployedLogs   = await chunkedLogs(PASS_DEPLOYED_EVENT, FACTORY_ADDRESS, DEPLOY_BLOCK, latest);
-            const passAddresses  = deployedLogs.map(l => l.args.pass as `0x${string}`);
-
-            let verificationCount = 0;
-            let feeCollectedWei   = 0n;
-
-            if (passAddresses.length > 0) {
-                const recentFrom = latest > 500_000n ? latest - 500_000n : 0n;
-                const [verifiedLogs, feeLogs] = await Promise.all([
-                    chunkedLogs(VERIFIED_EVENT,      passAddresses, recentFrom,   latest),
-                    chunkedLogs(FEE_COLLECTED_EVENT, passAddresses, DEPLOY_BLOCK, latest),
-                ]);
-                verificationCount = verifiedLogs.length;
-                feeCollectedWei   = feeLogs.reduce((s, l) => s + (l.args.amount ?? 0n), 0n);
+            const res = await fetch("/api/stats");
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                throw new Error(body.error ?? `HTTP ${res.status}`);
             }
-
-            setStats({
-                blockNumber: latest,
-                passCount:   passAddresses.length,
-                verificationCount,
-                feeCollectedWei,
-                signetFee,
-                treasury,
-                treasuryBalWei,
-                factoryOwner,
-                fetchedAt: new Date(),
-            });
+            const data = await res.json();
+            setStats(data);
         } catch (e) {
-            setError(e instanceof Error ? e.message : "RPC error");
+            setError(e instanceof Error ? e.message : "Failed to load stats");
         } finally {
             setLoading(false);
         }
@@ -199,9 +109,9 @@ export function StatsClient() {
 
     useEffect(() => { load(); }, [load]);
 
-    const feeLabel = !stats || stats.signetFee === 0n
+    const feeLabel = !stats || stats.signetFee === "0"
         ? "Free during testnet"
-        : `${formatEther(stats.signetFee)} ETH per verification`;
+        : `${stats.signetFeeEth} ETH per verification`;
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -227,7 +137,7 @@ export function StatsClient() {
                     <div className="flex items-center gap-3 pt-1">
                         {stats && !loading && (
                             <span className="font-mono text-[0.6rem] text-muted-2">
-                                {stats.fetchedAt.toLocaleTimeString()}
+                                {new Date(stats.fetchedAt).toLocaleTimeString()}
                             </span>
                         )}
                         <button
@@ -270,15 +180,17 @@ export function StatsClient() {
                                 />
                                 <Metric
                                     label="Revenue"
-                                    value={stats.feeCollectedWei === 0n
+                                    value={stats.feeCollectedEth === "0.0" || stats.feeCollectedEth === "0"
                                         ? "—"
-                                        : `${parseFloat(formatEther(stats.feeCollectedWei)).toFixed(4)} ETH`}
-                                    note={stats.feeCollectedWei === 0n ? "No fees collected yet" : "All-time · fees only"}
-                                    accent={stats.feeCollectedWei > 0n}
+                                        : `${parseFloat(stats.feeCollectedEth).toFixed(4)} ETH`}
+                                    note={stats.feeCollectedEth === "0.0" || stats.feeCollectedEth === "0"
+                                        ? "No fees collected yet"
+                                        : "All-time · fees only"}
+                                    accent={parseFloat(stats.feeCollectedEth) > 0}
                                 />
                                 <Metric
                                     label="Treasury balance"
-                                    value={`${parseFloat(formatEther(stats.treasuryBalWei)).toFixed(4)} ETH`}
+                                    value={`${parseFloat(stats.treasuryBalEth).toFixed(4)} ETH`}
                                     note="Current wallet balance"
                                 />
                             </>
@@ -295,11 +207,11 @@ export function StatsClient() {
                                 <p className="text-[0.68rem] text-muted-2 mt-0.5">{feeLabel}</p>
                             </div>
                             <span className={`font-mono text-[0.72rem] px-2.5 py-1 rounded-full border ${
-                                stats.signetFee === 0n
+                                stats.signetFee === "0"
                                     ? "text-muted-2 border-border bg-surface-2"
                                     : "text-green border-green/25 bg-green/5"
                             }`}>
-                                {stats.signetFee === 0n ? "0 ETH" : `${formatEther(stats.signetFee)} ETH`}
+                                {stats.signetFee === "0" ? "0 ETH" : `${stats.signetFeeEth} ETH`}
                             </span>
                         </div>
                     </section>

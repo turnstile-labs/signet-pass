@@ -124,7 +124,7 @@ export function CreateClient() {
         setMyPassesLoading(true);
         (async () => {
             try {
-                const CHUNK        = 9_000n;
+                const CHUNK        = 50_000n;
                 const MAX_LOOKBACK = 500_000n;
                 const latest       = await logsClient.getBlockNumber();
                 const start        = latest > MAX_LOOKBACK ? latest - MAX_LOOKBACK : 0n;
@@ -289,7 +289,7 @@ export function CreateClient() {
                 {view === "list" && (
                     <>
                         {/* Header */}
-                        <div className="space-y-4">
+                        <div className="flex items-start justify-between gap-4">
                             <div>
                                 <p className="font-mono text-[0.63rem] uppercase tracking-widest text-muted-2 mb-2">
                                     Signet Pass
@@ -297,21 +297,25 @@ export function CreateClient() {
                                 <h1 className="text-[2rem] sm:text-[2.2rem] font-bold tracking-tight text-white leading-[1.1]">
                                     My passes
                                 </h1>
-                                <p className="text-[0.82rem] text-muted mt-2">
-                                    <span className="text-text/80 font-medium">For founders and community managers</span>
-                                    {" "}— no code required.
-                                </p>
+                                {!isConnected && (
+                                    <p className="text-[0.82rem] text-muted mt-2">
+                                        <span className="text-text/80 font-medium">For founders and community managers</span>
+                                        {" "}— no code required.
+                                    </p>
+                                )}
                             </div>
-                            <button
-                                onClick={() => { resetCreate(); setView("create"); }}
-                                className="w-full sm:w-auto flex items-center justify-center gap-1.5
-                                           bg-accent text-[0.85rem] font-semibold px-5 py-3 rounded-xl
-                                           hover:opacity-90 transition-opacity"
-                                style={{ color: "#fff" }}
-                            >
-                                <span className="text-base leading-none">+</span>
-                                New pass
-                            </button>
+                            {isConnected && address && (
+                                <button
+                                    onClick={() => { resetCreate(); setView("create"); }}
+                                    className="flex-shrink-0 flex items-center gap-1.5
+                                               bg-accent text-[0.85rem] font-semibold px-4 py-2.5 rounded-xl
+                                               hover:opacity-90 transition-opacity mt-1"
+                                    style={{ color: "#fff" }}
+                                >
+                                    <span className="text-base leading-none">+</span>
+                                    New pass
+                                </button>
+                            )}
                         </div>
 
                         {/* Wallet status — contextual, only when connected */}
@@ -332,18 +336,24 @@ export function CreateClient() {
 
                         {/* Passes list */}
                         {!isConnected ? (
-                            <div className="rounded-2xl border border-dashed border-border p-10
+                            <div className="rounded-2xl border border-border bg-surface p-10
                                             flex flex-col items-center gap-5 text-center">
-                                <p className="text-[0.88rem] text-muted">
-                                    Connect your wallet to see your passes.
-                                </p>
+                                <div className="space-y-1.5">
+                                    <p className="text-[0.95rem] font-semibold text-text">
+                                        Connect your wallet to get started
+                                    </p>
+                                    <p className="text-[0.82rem] text-muted max-w-xs">
+                                        View your passes or create a new one — one transaction on Base Sepolia.
+                                    </p>
+                                </div>
                                 <ConnectKitButton.Custom>
                                     {({ show }) => (
                                         <button onClick={show}
-                                            className="rounded-xl border border-border-h bg-surface
-                                                       font-medium px-5 py-2.5 text-[0.85rem] text-text
-                                                       hover:border-accent/50 hover:text-accent
-                                                       transition-colors cursor-pointer">
+                                            className="rounded-xl bg-accent font-semibold px-6 py-3
+                                                       text-[0.88rem] hover:opacity-90 transition-opacity
+                                                       cursor-pointer"
+                                            style={{ color: "#fff" }}
+                                        >
                                             Connect wallet
                                         </button>
                                     )}
