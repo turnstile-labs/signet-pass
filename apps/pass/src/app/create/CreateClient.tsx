@@ -31,15 +31,6 @@ function persistPasses(passes: SavedPass[]) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(passes)); } catch { /* ignore */ }
 }
 
-const _alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
-const logsClient = createPublicClient({
-    chain:     baseSepolia,
-    transport: http(
-        _alchemyKey
-            ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}`
-            : "https://sepolia.base.org"
-    ),
-});
 
 const PASS_DEPLOYED_EVENT = {
     anonymous: false,
@@ -71,6 +62,15 @@ function dateToUnix(s: string): bigint {
 
 const _alchemyKey   = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "";
 const PAYMASTER_URL = _alchemyKey ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}` : "";
+
+const logsClient = createPublicClient({
+    chain:     baseSepolia,
+    transport: http(
+        _alchemyKey
+            ? `https://base-sepolia.g.alchemy.com/v2/${_alchemyKey}`
+            : "https://sepolia.base.org"
+    ),
+});
 const PASS_URL_ENV  = process.env.NEXT_PUBLIC_PASS_URL ?? "";
 
 function buildVerifyUrl(contract: string, name: string): string {
